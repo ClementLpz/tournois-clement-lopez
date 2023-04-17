@@ -12,3 +12,25 @@ class Tournoi(models.Model):
 
     def __str__(self):
         return self.name
+
+class Equipe(models.Model):
+    """
+    A team, with several pools/matches
+    """
+    name = models.CharField(max_length=200)
+    coach_name = models.CharField(max_length=200)
+    team_members = models.CharField(max_length=2000)
+
+    def __str__(self):
+        return self.name
+
+class Poule(models.Model):
+    """
+    A pool, with one tournament, and several teams/matches
+    """
+    number = models.IntegerField('Number of the pool')
+    tournament = models.ForeignKey(Tournoi, on_delete=models.CASCADE)
+    teams = models.ManyToManyField(Equipe)
+
+    def __str__(self):
+        return "Pool number " + str(self.number) + " : " + str(self.tournament)
