@@ -7,3 +7,6 @@ def tournaments_list(request):
     tournaments_list = get_list_or_404(Tournoi)
     context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', context)
+
+def tournament_details(request, tournament_id):
+    return HttpResponse("Tournament details coming soon")
