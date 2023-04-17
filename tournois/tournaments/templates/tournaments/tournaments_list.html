@@ -1,0 +1,11 @@
+{% if tournaments_list %}
+    <ul>
+    {% for tournament in tournaments_list %}
+    <li> <h3>{{ tournament.name }} :</h3> </li>
+    Location : {{ tournament.place }} <br>
+    Date : {{ tournament.date }} <br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No tournament in the database.</p>
+{% endif %}
