@@ -34,3 +34,19 @@ class Poule(models.Model):
 
     def __str__(self):
         return "Pool number " + str(self.number) + " : " + str(self.tournament)
+
+class Match(models.Model):
+    """
+    A match, several by pools, involving two teams
+    """
+    date = models.CharField(max_length=200)
+    hour = models.CharField(max_length=200)
+    place = models.CharField(max_length=200)
+    team1 = models.ForeignKey(Equipe, on_delete=models.CASCADE, related_name='team1_set')
+    score1 = models.IntegerField(default=0)
+    team2 = models.ForeignKey(Equipe, on_delete=models.CASCADE, related_name='team2_set')
+    score2 = models.IntegerField(default=0)
+    pool = models.ForeignKey(Poule, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
