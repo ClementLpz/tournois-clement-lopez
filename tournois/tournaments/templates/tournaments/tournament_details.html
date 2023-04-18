@@ -1,0 +1,17 @@
+<a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
+
+{% if tournament.poule_set.all %}
+    <ul>
+    {% for poule in tournament.poule_set.all %}
+        <li><h1>Pool number {{ poule.number }} : </h1></li>
+        Teams competing : <br> </br>
+        <ul>
+            {% for team in poule.teams.all %}
+            <li>{{ team.name }}</li> <br>
+            {% endfor %}    
+        </ul>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No pool in the tournament.</p>
+{% endif %}
