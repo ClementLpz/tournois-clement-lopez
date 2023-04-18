@@ -12,3 +12,6 @@ def tournament_details(request, tournament_id):
     tournament = get_object_or_404(Tournoi, pk=tournament_id)
     context = {'tournament' : tournament}
     return render(request,'tournaments/tournament_details.html', context)
+
+def pool_details(request, pool_id):
+    return HttpResponse("Pool details coming soon.")

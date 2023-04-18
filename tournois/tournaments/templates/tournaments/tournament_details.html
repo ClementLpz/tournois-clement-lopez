@@ -3,7 +3,7 @@
 {% if tournament.poule_set.all %}
     <ul>
     {% for poule in tournament.poule_set.all %}
-        <li><h1>Pool number {{ poule.number }} : </h1></li>
+        <a href="{% url 'tournaments:pool_details' poule.id %}"> <li><h1>Pool number {{ poule.number }} : </h1></li> </a>
         Teams competing : <br> </br>
         <ul>
             {% for team in poule.teams.all %}

@@ -10,4 +10,7 @@ urlpatterns = [
 
     # ex: /tournaments/5/
     path('<int:tournament_id>/', views.tournament_details, name='tournament_details'),
+
+    # ex: /tournaments/pool/5
+    path('pool/<int:pool_id>/', views.pool_details, name='pool_details'),
 ]
