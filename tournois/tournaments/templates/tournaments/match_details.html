@@ -19,8 +19,32 @@ Extend site-wide base HTML template located in main templates/ dir
 </ul>
 
 <br> </br>
-<h1>Comments</h1>
+<h1>Comments</h1> 
 
-Please <a href="{% url 'login' %}"> login </a> to comment this match.
+{% if match.comment_set.all %}
+    <ul>
+    {% for comment in match.comment_set.all %}
+        <li>Comment by <b>{{ comment.author }}</b>, posted on {{ comment.date }}, at {{ comment.hour }} : <br> </br>
+        <p>{{ comment.message }}</p></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No comment yet for this match !.</p>
+{% endif %}
+
+<br> <br>
+
+{% if username %}
+    <form action="{% url 'tournaments:match_details' match.id %}" method="POST">
+        {% csrf_token %}
+        <label for="message"> Comment the match :</label>
+        <input type="text" id="message" name="message">
+        <button type="submit"> Send </button>
+    </form>
+
+    <br> <br>
+{% else %}
+    Please <a href="{% url 'login' %}"> login </a> to comment this match. <br> <br>
+{% endif %}
 
 {% endblock content %}
