@@ -1,4 +1,13 @@
-<a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
+{% extends 'base.html' %}
+
+{% comment %}
+Extend site-wide base HTML template located in main templates/ dir
+(same level as manage.py)
+{% endcomment %}
+
+{% block title %}Match Details{% endblock title%}
+
+{% block content %}
 
 <h1>Match :</h1>
 
@@ -13,3 +22,5 @@
 <h1>Comments</h1>
 
 Please <a href="{% url 'login' %}"> login </a> to comment this match.
+
+{% endblock content %}

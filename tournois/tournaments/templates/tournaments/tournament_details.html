@@ -1,4 +1,13 @@
-<a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
+{% extends 'base.html' %}
+
+{% comment %}
+Extend site-wide base HTML template located in main templates/ dir
+(same level as manage.py)
+{% endcomment %}
+
+{% block title %}Tournament Details{% endblock title%}
+
+{% block content %}
 
 {% if tournament.pool_set.all %}
     <ul>
@@ -15,3 +24,5 @@
 {% else %}
     <p>No pool in the tournament.</p>
 {% endif %}
+
+{% endblock content %}
