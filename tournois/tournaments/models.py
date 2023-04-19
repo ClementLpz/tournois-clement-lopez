@@ -111,3 +111,16 @@ class Match(models.Model):
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
+
+class Comment(models.Model):
+    """
+    A comment, by one author, for one match
+    """
+    author = models.CharField(max_length=200)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    date = models.CharField(max_length=200)
+    hour = models.CharField(max_length=200)
+    message = models.CharField(max_length=600)
+
+    def __str__(self):
+        return self.message
