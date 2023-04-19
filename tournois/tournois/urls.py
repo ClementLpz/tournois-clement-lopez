@@ -22,6 +22,9 @@ from tournaments import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tournaments/', include('tournaments.urls')),
+
+    # authentication route
+    path('accounts/', include('django.contrib.auth.urls')),
     
     # default route
     path('', views.tournaments_list, name='home')

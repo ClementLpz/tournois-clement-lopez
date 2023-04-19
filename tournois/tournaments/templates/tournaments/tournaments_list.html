@@ -1,3 +1,16 @@
+{% if username %}
+    Welcome {{ username }} ! <br> <br>
+    <form action="{%url 'logout'%}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit"> Logout </button>
+    </form>
+{% else %}
+    <form action="{%url 'login'%}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit"> Login </button>
+    </form>
+{% endif %}
+
 {% if tournaments_list %}
     <ul>
     {% for tournament in tournaments_list %}
