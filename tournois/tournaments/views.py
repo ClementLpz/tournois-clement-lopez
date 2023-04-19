@@ -18,3 +18,6 @@ def pool_details(request, pool_id):
     teams_ranked = Pool.compute_ranking(pool)
     context = {'pool' : pool, 'teams_ranked' : teams_ranked}
     return render(request,'tournaments/pool_details.html', context)
+
+def match_details(request, match_id):
+    return HttpResponse("Match details coming soon.")
