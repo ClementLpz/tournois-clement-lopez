@@ -1,12 +1,12 @@
 <a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
 
-{% if tournament.poule_set.all %}
+{% if tournament.pool_set.all %}
     <ul>
-    {% for poule in tournament.poule_set.all %}
-        <a href="{% url 'tournaments:pool_details' poule.id %}"> <li><h1>Pool number {{ poule.number }} : </h1></li> </a>
+    {% for pool in tournament.pool_set.all %}
+        <a href="{% url 'tournaments:pool_details' pool.id %}"> <li><h1>Pool number {{ pool.number }} : </h1></li> </a>
         Teams competing : <br> </br>
         <ul>
-            {% for team in poule.teams.all %}
+            {% for team in pool.teams.all %}
             <li>{{ team.name }}</li> <br>
             {% endfor %}    
         </ul>
