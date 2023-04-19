@@ -1,6 +1,13 @@
 <a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
 
 {% if pool.match_set.all %}
+    <h1>Teams</h1>
+    <ul>
+    {% for team in teams_ranked %}
+        <li>Name = <b>{{ team.name }}</b> ; Pool Points = {{ team.pool_points }} ; Scored = {{ team.scored }} ; Conceded = {{ team.conceded }}</li><br> </br>
+    {% endfor %}
+    </ul>
+
     <h1>Matchs</h1>
     <ul>
     {% for match in pool.match_set.all %}

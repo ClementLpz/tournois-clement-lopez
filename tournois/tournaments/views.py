@@ -15,5 +15,6 @@ def tournament_details(request, tournament_id):
 
 def pool_details(request, pool_id):
     pool = get_object_or_404(Pool, pk=pool_id)
-    context = {'pool' : pool}
+    teams_ranked = Pool.compute_ranking(pool)
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked}
     return render(request,'tournaments/pool_details.html', context)
