@@ -1,0 +1,14 @@
+<a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
+
+<h1>Match :</h1>
+
+{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} <br> </br>
+<ul>
+    <li><b>Location</b> : {{ match.place }}</li> <br>
+    <li><b>Date</b> : {{ match.date }}</li> <br>  
+    <li><b>Hour</b> : {{ match.hour }}</li> <br>
+</ul>
+
+<br> </br>
+<h1>Comments</h1>
+Please login to comment this match
