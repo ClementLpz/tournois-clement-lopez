@@ -1,0 +1,17 @@
+<a href="{% url 'tournaments:tournaments_list' %}" class="button">Return Home</a> <br> <br>
+
+{% if pool.match_set.all %}
+    <h1>Matchs</h1>
+    <ul>
+    {% for match in pool.match_set.all %}
+        {{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} <br> </br>
+        <ul>
+            <li><b>Location</b> : {{ match.place }}</li> <br>
+            <li><b>Date</b> : {{ match.date }}</li> <br>  
+            <li><b>Hour</b> : {{ match.hour }}</li> <br>
+        </ul>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No match in the pool.</p>
+{% endif %}

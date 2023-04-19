@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 
-from .models import Tournament
+from .models import Tournament, Pool
 
 def tournaments_list(request):
     tournaments_list = get_list_or_404(Tournament)
@@ -14,4 +14,6 @@ def tournament_details(request, tournament_id):
     return render(request,'tournaments/tournament_details.html', context)
 
 def pool_details(request, pool_id):
-    return HttpResponse("Pool details coming soon.")
+    pool = get_object_or_404(Pool, pk=pool_id)
+    context = {'pool' : pool}
+    return render(request,'tournaments/pool_details.html', context)
