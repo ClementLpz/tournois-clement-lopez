@@ -25,7 +25,20 @@ Extend site-wide base HTML template located in main templates/ dir
     <ul>
     {% for comment in match.comment_set.all %}
         <li>Comment by <b>{{ comment.author }}</b>, posted on {{ comment.date }}, at {{ comment.hour }} : <br> </br>
-        <p>{{ comment.message }}</p></li>
+
+            {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
+                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit"></button>
+                </form>
+            {% else %}
+                <p>{{ comment.message }}</p></li>
+                {% if username|stringformat:"s" == comment.author %}
+                    <a href="{% url 'tournaments:update_comment' match.id comment.id %}"><button>Edit</button></a> <br> <br>
+                {% endif %}
+            {% endif %}
+
     {% endfor %}
     </ul>
 {% else %}

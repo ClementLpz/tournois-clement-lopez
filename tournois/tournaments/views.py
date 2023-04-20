@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 
 from .models import Tournament, Pool, Match, Comment
@@ -45,6 +45,22 @@ def match_details(request, match_id):
                               author = request.user)
             comment.save()                  
             context['form'] = form
-            return render(request,'tournaments/match_details.html', user_authentication(request, context))
     
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
+
+def update_comment(request, match_id, comment_id):
+    match = get_object_or_404(Match, pk=match_id)
+    context = {'match' : match}
+
+    comment = get_object_or_404(Comment, pk=comment_id)
+    if request.method == 'GET':
+        form = CommentForm(instance=comment)
+    elif request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            print("redirige")
+            return redirect('tournaments:match_details', match_id)
+    
+    context['form'] = form
+    return render(request, 'tournaments/match_details.html', user_authentication(request, context))
