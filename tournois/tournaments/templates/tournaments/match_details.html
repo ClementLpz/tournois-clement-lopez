@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'base.html'%}
+
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -8,6 +9,13 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block title %}Match Details{% endblock title%}
 
 {% block content %}
+
+<div class="results-btn">
+    <button onclick="history.go(-1);"><i class="fas fa-arrow-left"></i> Pool number {{ match.pool.number }} </button>
+</div>
+<div class="results-btn">
+    <button onclick="history.go(-2);"><i class="fas fa-arrow-left"></i> {{ match.pool.tournament.name }} </button>
+</div>
 
 <h1>Match :</h1>
 
