@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-
+{% load bootstrap5 %}
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -69,10 +69,13 @@ Extend site-wide base HTML template located in main templates/ dir
                         <td>{{ comment.pub_date }}</td>
                         <td>
                             {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
-                                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST">
+                                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST" class="form">
                                     {% csrf_token %}
-                                    {{ form }}
-                                    <input type="submit" length="10px"></button>
+                                    {% bootstrap_form form %}
+
+                                    {% buttons %}
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    {% endbuttons %}
                                 </form>
                             {% else %}
                                 {{ comment.message }}
@@ -101,11 +104,14 @@ Extend site-wide base HTML template located in main templates/ dir
 
 <div class="row">
     {% if username %}
-        <form action="{% url 'tournaments:match_details' match.id %}" method="POST">
+        <form action="{% url 'tournaments:match_details' match.id %}" method="POST" class="form">
             {% csrf_token %}
             <label for="message"> Comment the match :</label>
-            <input type="text" id="message" name="message">
-            <button type="submit"> Send </button>
+            <input type="text" id="message" name="message"> <br/> <br/>
+
+            {% buttons %}
+              <button type="submit" class="btn btn-primary">Send</button>
+            {% endbuttons %}
         </form>
     {% else %}
         <div class="jumbotron"><i>Please <a href="{% url 'login' %}"> login </a> to comment this match.</i></div>
