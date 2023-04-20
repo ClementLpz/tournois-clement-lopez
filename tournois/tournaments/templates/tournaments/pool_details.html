@@ -10,11 +10,11 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block content %}
 
 <div class="row pt-3">
-    <a class="btn btn-primary" href="{% url 'tournaments:tournaments_list' %}">Back to Tournament list</a> 
+    <a class="btn btn-primary" href="{% url 'tournaments:tournaments_list' %}">Back to "Tournament list"</a> 
 </div>
 
 <div class="row pt-3">
-    <button class="btn btn-primary" onclick="history.go(-1);"><i class="fas fa-arrow-left"></i>Back to {{ pool.tournament.name }}</button> 
+    <button class="btn btn-primary" onclick="history.go(-1);"><i class="fas fa-arrow-left"></i>Back to "{{ pool.tournament.name }}"</button> 
 </div>
 
 <br>

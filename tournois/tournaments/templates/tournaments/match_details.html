@@ -10,62 +10,106 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
-<div class="results-btn">
-    <button onclick="history.go(-1);"><i class="fas fa-arrow-left"></i> Pool number {{ match.pool.number }} </button>
-</div>
-<div class="results-btn">
-    <button onclick="history.go(-2);"><i class="fas fa-arrow-left"></i> {{ match.pool.tournament.name }} </button>
+<div class="row pt-3">
+    <a class="btn btn-primary" href="{% url 'tournaments:tournaments_list' %}">Back to Tournament list</a> 
 </div>
 
-<h1>Match :</h1>
+<div class="row pt-3">
+    <button class="btn btn-primary" onclick="history.go(-1);"><i class="fas fa-arrow-left"></i>Back to "{{ match.pool.tournament.name }}"</button> 
+</div>
 
-{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} <br> </br>
-<ul>
-    <li><b>Location</b> : {{ match.place }}</li> <br>
-    <li><b>Date</b> : {{ match.date }}</li> <br>  
-    <li><b>Hour</b> : {{ match.hour }}</li> <br>
-</ul>
+<div class="row pt-3">
+    <button class="btn btn-primary" onclick="history.go(-2);"><i class="fas fa-arrow-left"></i>Back to "Pool number {{ match.pool.number }}"</button> 
+</div>
+
+<div class="row pb-3">
+    <br>
+</div>
+
+<div class="row pb-3">
+    <h1>Match : {{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</h1> <br> 
+</div>
+
+<div class="row pb-3">
+    <h3>
+        <small>
+            <ul>
+                <li><b>Location</b> : {{ match.place }}</li> <br>
+                <li><b>Date</b> : {{ match.date }}</li> <br>  
+                <li><b>Hour</b> : {{ match.hour }}</li> <br>
+            </ul>
+        </small>
+    </h3>
+</div>
 
 <br> </br>
-<h1>Comments</h1> 
 
-{% if match.comment_set.all %}
-    <ul>
-    {% for comment in match.comment_set.all %}
-        <li>Comment by <b>{{ comment.author }}</b>, posted on {{ comment.pub_date }} : <br> </br>
+<div class="row pb-3">
+    <h1>Comments</h1>
+</div>
 
-            {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
-                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST">
-                    {% csrf_token %}
-                    {{ form }}
-                    <input type="submit"></button>
-                </form>
-            {% else %}
-                <p>{{ comment.message }}</p></li>
-                {% if username|stringformat:"s" == comment.author %}
-                    <a href="{% url 'tournaments:update_comment' match.id comment.id %}"><button>Edit</button></a> <br> <br>
-                {% endif %}
-            {% endif %}
+<div class="row">
+    {% if match.comment_set.all %}
 
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No comment yet for this match !.</p>
-{% endif %}
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Author</th>
+                <th>Publication Date</th>
+                <th>Comment</th>
+                <th>Edit</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for comment in match.comment_set.all %}
+                    <tr>
+                        <td>{{ comment.author }}</td>
+                        <td>{{ comment.pub_date }}</td>
+                        <td>
+                            {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
+                                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST">
+                                    {% csrf_token %}
+                                    {{ form }}
+                                    <input type="submit" length="10px"></button>
+                                </form>
+                            {% else %}
+                                {{ comment.message }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if username|stringformat:"s" == comment.author %}
+                                {% if not form or form.instance.id != comment.id %}
+                                    <a class="btn btn-primary" href="{% url 'tournaments:update_comment' match.id comment.id %}">Edit</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    {% else %}
+        <div class="jumbotron"><i>No comment yet for this match.</i></div>
+    {% endif %}
+</div>
 
 <br> <br>
 
-{% if username %}
-    <form action="{% url 'tournaments:match_details' match.id %}" method="POST">
-        {% csrf_token %}
-        <label for="message"> Comment the match :</label>
-        <input type="text" id="message" name="message">
-        <button type="submit"> Send </button>
-    </form>
-
-    <br> <br>
-{% else %}
-    Please <a href="{% url 'login' %}"> login </a> to comment this match. <br> <br>
-{% endif %}
+<div class="row">
+    {% if username %}
+        <form action="{% url 'tournaments:match_details' match.id %}" method="POST">
+            {% csrf_token %}
+            <label for="message"> Comment the match :</label>
+            <input type="text" id="message" name="message">
+            <button type="submit"> Send </button>
+        </form>
+    {% else %}
+        <div class="jumbotron"><i>Please <a href="{% url 'login' %}"> login </a> to comment this match.</i></div>
+    {% endif %}
+</div>
 
 {% endblock content %}
