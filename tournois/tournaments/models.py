@@ -3,10 +3,13 @@ from django.shortcuts import get_object_or_404
 
 import datetime
 
+
 class Tournament(models.Model):
+
     """
     A tournament, with several pools, and teams
     """
+
     name = models.CharField(max_length=200)
     place = models.CharField(max_length=200, null=True)
     date = models.CharField(max_length=200, null=True)
@@ -19,10 +22,13 @@ class Tournament(models.Model):
     def __str__(self):
         return self.name
 
+
 class Team(models.Model):
+
     """
     A team, with several pools/matches
     """
+
     name = models.CharField(max_length=200)
     coach_name = models.CharField(max_length=200)
     team_members = models.CharField(max_length=2000)
@@ -36,10 +42,13 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+
 class Pool(models.Model):
+
     """
     A pool, with one tournament, and several teams/matches
     """
+
     number = models.IntegerField('Number of the pool')
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     teams = models.ManyToManyField(Team)
@@ -49,6 +58,10 @@ class Pool(models.Model):
 
     def __str__(self):
         return "Pool number " + str(self.number) + " : " + str(self.tournament)
+
+    """
+    A function that adds to the database all the matches possible in a pool
+    """
 
     def all_matches(self):
         n = self.teams.size()
@@ -62,6 +75,13 @@ class Pool(models.Model):
                 match.hour = "10h - 12h"
                 match.place = self.tournament.place
                 match.save()
+
+    """
+    A function that computes the ranking of the teams in a pool, 
+    with the matches results
+
+    :returns: a list with the teams ranked by pool points
+    """
 
     def compute_ranking(self):
         teams = self.teams.all()
@@ -99,9 +119,11 @@ class Pool(models.Model):
 
             
 class Match(models.Model):
+
     """
     A match, several by pools, involving two teams
     """
+
     date = models.CharField(max_length=200)
     hour = models.CharField(max_length=200)
     place = models.CharField(max_length=200)
@@ -114,10 +136,13 @@ class Match(models.Model):
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
 
+
 class Comment(models.Model):
+
     """
     A comment, by one author, for one match
     """
+
     author = models.CharField(max_length=200)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('Date & hour published', null=True)

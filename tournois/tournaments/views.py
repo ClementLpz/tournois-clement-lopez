@@ -6,6 +6,13 @@ from .models import Tournament, Pool, Match, Comment
 from .forms import CommentForm
 
 def user_authentication(request, context):
+
+    """
+    Add the username to the context if the user is authenticated
+    :param request: The incoming request
+    :param context: The context to add the username
+    """
+
     if request.user.is_authenticated:
         username = request.user
     else :
@@ -15,22 +22,51 @@ def user_authentication(request, context):
     return context
 
 def tournaments_list(request):
+
+    """
+    Get all tournaments from database
+    :param request: The incoming request
+    """
+
     tournaments_list = get_list_or_404(Tournament)
     context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
 def tournament_details(request, tournament_id):
+
+    """
+    Get pools of the selected tournament from database
+    :param request: The incoming request
+    :param tournament_id: The id of the selected tournament
+    """
+
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     context = {'tournament' : tournament}
     return render(request,'tournaments/tournament_details.html', user_authentication(request, context))
 
 def pool_details(request, pool_id):
+
+    """
+    Get matchs of the selected pool from database. 
+    Also computes the ranking of teams in the pool.
+    :param request: The incoming request
+    :param pool_id: The id of the selected pool
+    """
+
     pool = get_object_or_404(Pool, pk=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
     context = {'pool' : pool, 'teams_ranked' : teams_ranked}
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
 def match_details(request, match_id):
+
+    """
+    Get comments of the selected match from database.
+    Allow an authenticated user to POST a new comment on the match.
+    :param request: The incoming request
+    :param match_id: The id of the selected match
+    """
+
     match = get_object_or_404(Match, pk=match_id)
     context = {'match' : match}
 
@@ -49,6 +85,14 @@ def match_details(request, match_id):
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
 
 def update_comment(request, match_id, comment_id):
+
+    """
+    Allow an authenticated user to MODIFY a comment he posted.
+    :param request: The incoming request
+    :param match_id: The id of the selected match
+    :param comment_id: The id of the comment to modify
+    """
+
     match = get_object_or_404(Match, pk=match_id)
     context = {'match' : match}
 
