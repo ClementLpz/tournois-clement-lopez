@@ -9,31 +9,84 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
-<div class="results-btn">
-    <button onclick="history.go(-1);"><i class="fas fa-arrow-left"></i> {{ pool.tournament.name }} </button>
+<div class="row pt-3">
+    <a class="btn btn-primary" href="{% url 'tournaments:tournaments_list' %}">Back to Tournament list</a> 
 </div>
 
-{% if pool.match_set.all %}
-    <h1>Teams</h1>
-    <ul>
-    {% for team in teams_ranked %}
-        <li>Name = <b>{{ team.name }}</b> ; Pool Points = {{ team.pool_points }} ; Scored = {{ team.scored }} ; Conceded = {{ team.conceded }}</li><br> </br>
-    {% endfor %}
-    </ul>
+<div class="row pt-3">
+    <button class="btn btn-primary" onclick="history.go(-1);"><i class="fas fa-arrow-left"></i>Back to {{ pool.tournament.name }}</button> 
+</div>
 
-    <h1>Matchs</h1>
-    <ul>
-    {% for match in pool.match_set.all %}
-        <a href="{% url 'tournaments:match_details' match.id %}">{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a> <br> </br>
-        <ul>
-            <li><b>Location</b> : {{ match.place }}</li> <br>
-            <li><b>Date</b> : {{ match.date }}</li> <br>  
-            <li><b>Hour</b> : {{ match.hour }}</li> <br>
-        </ul>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No match in the pool.</p>
-{% endif %}
+<br>
+
+<div class="row">
+    {% if pool.match_set.all %}
+
+        <div class="row pb-3">
+            <h1>Teams</h1>
+        </div>
+
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Team</th>
+                <th>Pool Points</th>
+                <th>Scored</th>
+                <th>Conceded</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for team in teams_ranked %}
+                    <tr>
+                        <td>{{ team.name }}</td>
+                        <td>{{ team.pool_points }}</td>
+                        <td>{{ team.scored }}</td>
+                        <td>{{ team.conceded }}</td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+        <div class="row pb-3">
+            <br>
+        </div>
+    
+        <div class="row pb-3">
+            <h1>Matchs</h1>
+        </div>
+
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Match</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Hour</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for match in pool.match_set.all %}
+                    <tr>
+                        <td><a href="{% url 'tournaments:match_details' match.id %}">{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a></td>
+                        <td>{{ match.place }}</td>
+                        <td>{{ match.date }}</td>
+                        <td>{{ match.hour }}</td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    {% else %}
+        <div class="jumbotron"><i>No match in the pool.</i></div>
+    {% endif %}
+</div>
 
 {% endblock content %}
