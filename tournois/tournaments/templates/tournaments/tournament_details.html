@@ -9,20 +9,44 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
-{% if tournament.pool_set.all %}
-    <ul>
-    {% for pool in tournament.pool_set.all %}
-        <a href="{% url 'tournaments:pool_details' pool.id %}"> <li><h1>Pool number {{ pool.number }} : </h1></li> </a>
-        Teams competing : <br> </br>
-        <ul>
-            {% for team in pool.teams.all %}
-            <li>{{ team.name }}</li> <br>
-            {% endfor %}    
-        </ul>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No pool in the tournament.</p>
-{% endif %}
+<div class="row pt-3">
+    <a class="btn btn-primary" href="{% url 'tournaments:tournaments_list' %}">Back to tournament list</a> 
+</div>
+
+<br/>
+
+<div class="row pb-3">
+    <h2>{{ tournament.name }} <br/> <small>in {{ tournament.place }}, {{ tournament.date }}</small></h2>
+</div>
+
+<div class="row">
+    {% if tournament.pool_set.all %}
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Pool number</th>
+                <th>Teams</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for pool in tournament.pool_set.all %}
+                    <tr>
+                        <td><a href="{% url 'tournaments:pool_details' pool.id %}">Pool number {{ pool.number }}</a></td>
+                        
+                        <td>{% for team in pool.teams.all %}
+                            <li>{{ team.name }}</li> <br>
+                            {% endfor %} 
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    {% else %}
+        <div class="jumbotron"><i>No pool in this tournament.</i></div>
+    {% endif %}
+</div>
 
 {% endblock content %}
