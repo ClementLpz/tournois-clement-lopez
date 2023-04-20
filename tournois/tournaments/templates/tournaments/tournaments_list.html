@@ -9,16 +9,36 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
+<div class="row pb-3">
+    <h1>Tournaments</h1>
+</div>
+
+<div class="row">
 {% if tournaments_list %}
-    <ul>
-    {% for tournament in tournaments_list %}
-    <li> <h3> <a href="{% url 'tournaments:tournament_details' tournament.id %}">{{ tournament.name }}</a> :</h3> </li>
-    Location : {{ tournament.place }} <br>
-    Date : {{ tournament.date }} <br>
-    {% endfor %}
-    </ul>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+
+
+        <tbody>
+        {% for tournament in tournaments_list %}
+            <tr>
+                <td><a href="{% url 'tournaments:tournament_details' tournament.id %}">{{ tournament.name }}</a></td>
+                <td>{{ tournament.place }}</td>
+                <td>{{ tournament.date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% else %}
-    <p>No tournament in the database.</p>
+    <div class="jumbotron"><i>No tournament available.</i></div>
 {% endif %}
+
+</div>
 
 {% endblock content %}
