@@ -32,7 +32,7 @@ Extend site-wide base HTML template located in main templates/ dir
 {% if match.comment_set.all %}
     <ul>
     {% for comment in match.comment_set.all %}
-        <li>Comment by <b>{{ comment.author }}</b>, posted on {{ comment.date }}, at {{ comment.hour }} : <br> </br>
+        <li>Comment by <b>{{ comment.author }}</b>, posted on {{ comment.pub_date }} : <br> </br>
 
             {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
                 <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST">

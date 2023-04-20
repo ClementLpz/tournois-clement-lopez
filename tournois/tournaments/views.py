@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
+from django.utils import timezone
 
 from .models import Tournament, Pool, Match, Comment
 from .forms import CommentForm
@@ -40,8 +41,7 @@ def match_details(request, match_id):
         if form.is_valid():
             comment = Comment(message = form.cleaned_data['message'], 
                               match = match, 
-                              date = "01/01/2001", 
-                              hour = "00h00", 
+                              pub_date = timezone.now(), 
                               author = request.user)
             comment.save()                  
             context['form'] = form
@@ -53,13 +53,13 @@ def update_comment(request, match_id, comment_id):
     context = {'match' : match}
 
     comment = get_object_or_404(Comment, pk=comment_id)
+    comment.pub_date = timezone.now()
     if request.method == 'GET':
         form = CommentForm(instance=comment)
     elif request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            print("redirige")
             return redirect('tournaments:match_details', match_id)
     
     context['form'] = form

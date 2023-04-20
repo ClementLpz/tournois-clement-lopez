@@ -1,6 +1,8 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
 
+import datetime
+
 class Tournament(models.Model):
     """
     A tournament, with several pools, and teams
@@ -118,8 +120,7 @@ class Comment(models.Model):
     """
     author = models.CharField(max_length=200)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
-    date = models.CharField(max_length=200)
-    hour = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('Date & hour published', null=True)
     message = models.CharField(max_length=600)
 
     def __str__(self):
