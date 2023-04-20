@@ -64,16 +64,16 @@ class Pool(models.Model):
     """
 
     def all_matches(self):
-        n = self.teams.size()
+        n = self.teams.all().count()
+        list_all_matches = list(self.teams.all())
         for i in range(n - 1):
             for j in range(i + 1, n):
-                match = get_object_or_404(Match)
-                match.team1 = self.teams[i]
-                match.team2 = self.teams[j]
-                match.pool = self
-                match.date = "01/01/2001"
-                match.hour = "10h - 12h"
-                match.place = self.tournament.place
+                match = Match(team1 = list_all_matches[i], 
+                              team2 = list_all_matches[j], 
+                              pool = self, 
+                              date = self.tournament.date,  
+                              hour = "10h - 12h", 
+                              place = self.tournament.place)
                 match.save()
 
     """

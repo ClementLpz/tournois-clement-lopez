@@ -14,6 +14,9 @@ urlpatterns = [
     # ex: /tournaments/pool/5
     path('pool/<int:pool_id>/', views.pool_details, name='pool_details'),
 
+    # ex: /tournaments/pool/5/compute_matches
+    path('pool/<int:pool_id>/<int:compute_matches>/', views.compute_matches, name='compute_matches'),
+
     # ex: /tournaments/match/5
     path('match/<int:match_id>/', views.match_details, name='match_details'),
 

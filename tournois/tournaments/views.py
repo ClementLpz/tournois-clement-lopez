@@ -44,6 +44,23 @@ def tournament_details(request, tournament_id):
     context = {'tournament' : tournament}
     return render(request,'tournaments/tournament_details.html', user_authentication(request, context))
 
+def compute_matches(request, pool_id, compute_matches):
+
+    """
+    Get matchs of the selected pool from database. 
+    Also computes the ranking of teams in the pool.
+    :param request: The incoming request
+    :param pool_id: The id of the selected pool
+    """
+
+    pool = get_object_or_404(Pool, pk=pool_id)
+    if (compute_matches == 1):
+        Pool.all_matches(pool)
+    teams_ranked = Pool.compute_ranking(pool)
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked}
+    return render(request,'tournaments/pool_details.html', user_authentication(request, context))
+
+
 def pool_details(request, pool_id):
 
     """
