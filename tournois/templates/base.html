@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,12 @@
 </head>
 
 <body>
-    <header>Tournaments Assignment</header> <br> <br>
+    <header>
+        <img src="{% static 'images/tournament_logo.webp' %}" width="800px" alt="logo"/> <br>
+        <h1><b>Tournament Assignment</b></h1> <br>
+    </header> 
+    
+    <br> <br>
 
     {% if username %}
         Welcome {{ username }} ! <br> <br>
