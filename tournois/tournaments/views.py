@@ -127,7 +127,7 @@ def update_comment(request, match_id, comment_id):
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
 
 
-def final_round(request, tournament_id, force=True):
+def final_round(request, tournament_id, force=False):
     print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
