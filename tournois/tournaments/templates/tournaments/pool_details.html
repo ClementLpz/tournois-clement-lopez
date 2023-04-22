@@ -110,6 +110,9 @@ Extend site-wide base HTML template located in main templates/ dir
     {% if username|stringformat:"s" == "admin" %}
         <a class="btn btn-primary" href="{% url 'tournaments:compute_matches' pool.id 1 %}">Compute all matches possible</a>
     {% endif %}    
+    {% if username|stringformat:"s" == "raph" %}
+    <a class="btn btn-primary" href="{% url 'tournaments:compute_matches' pool.id 1 %}">Compute all matches possible</a>
+    {% endif %}    
 {% endif %}
 
 
