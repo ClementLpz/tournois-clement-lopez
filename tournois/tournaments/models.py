@@ -1,3 +1,4 @@
+import random
 from django.db import models
 from django.shortcuts import get_object_or_404
 
@@ -131,7 +132,7 @@ class Match(models.Model):
     score1 = models.IntegerField(default=0)
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
-    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
@@ -150,3 +151,35 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.message
+    
+
+class FinalRound(models.Model):
+    """
+    A final round, with one tournament, and several matches
+    """
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    matches = models.ManyToManyField(Match)
+
+    class Meta:
+        db_table = "tournaments_finalround"
+
+    def __str__(self):
+        return "Final Round for: " + str(self.tournament)
+
+    def create_pairings(self):
+        print("create_pairing called")
+        pool_list = list(self.tournament.pool_set.all())
+        first_teams = []
+        second_teams = []
+
+        for pool in pool_list:
+            ranked_teams = pool.compute_ranking()
+            first_teams.append(ranked_teams[0])
+            second_teams.append(ranked_teams[1])
+
+        random.shuffle(second_teams)
+
+        for i in range(len(first_teams)):
+            match = Match(team1=first_teams[i], team2=second_teams[i], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
+            match.save()
+            self.matches.add(match)

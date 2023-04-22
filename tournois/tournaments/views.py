@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render, get_list_or_404, get_object_or_40
 from django.http import HttpResponse
 from django.utils import timezone
 
-from .models import Tournament, Pool, Match, Comment
+from .models import Tournament, Pool, Match, Comment, FinalRound
 from .forms import CommentForm
 
 def user_authentication(request, context):
@@ -125,3 +125,12 @@ def update_comment(request, match_id, comment_id):
     
     context['form'] = form
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
+
+def final_round(request, tournament_id):
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
+    if created:
+        final_round.create_pairings()
+
+    context = {'final_round': final_round}
+    return render(request, 'tournaments/final_round.html', user_authentication(request, context))

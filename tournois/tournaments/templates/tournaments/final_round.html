@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Final Round - {{ final_round.tournament.name }}</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Match</th>
+            <th>Team 1</th>
+            <th>Team 2</th>
+            <th>Date</th>
+            <th>Hour</th>
+            <th>Place</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match in final_round.matches.all %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ match.team1.name }}</td>
+            <td>{{ match.team2.name }}</td>
+            <td>{{ match.date }}</td>
+            <td>{{ match.hour }}</td>
+            <td>{{ match.place }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

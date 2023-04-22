@@ -22,5 +22,6 @@ urlpatterns = [
 
     # ex: /tournaments/match/5/11
     path('match/<int:match_id>/<int:comment_id>/', views.update_comment, name='update_comment'),
-
+    
+    path('<int:tournament_id>/final_round/', views.final_round, name='final_round'),
 ]
