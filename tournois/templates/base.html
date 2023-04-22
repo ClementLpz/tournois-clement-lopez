@@ -26,8 +26,10 @@
     <div class="container">
         <div class="row pb-3">
             <header>
-                <img src="{% static 'images/tournament_logo.webp' %}" width="1300px" alt="logo"/> <br/> <br/>
+                <a href="{% url 'tournaments:tournaments_list'%}">
+                <img src="{% static 'images/tournament_logo.webp' %}" width="1300px" alt="logo"/> </a><br/> <br/>
                 <h1 style="text-align:center">Tournament Assignment</h1>
+            
             </header>
         </div>
     
