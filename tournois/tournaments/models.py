@@ -1,8 +1,10 @@
 import random
 from django.db import models
+from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 
 import datetime
+from django.db.models.signals import post_save
 
 
 class Tournament(models.Model):
@@ -22,6 +24,26 @@ class Tournament(models.Model):
 
     def __str__(self):
         return self.name
+    
+    # def create_final_round(self, final_round):
+    #     print("create_final_round called")  # Ajoutez cette ligne pour le débogage
+    #     pool_list = list(self.pool_set.all())
+    #     first_teams = []
+    #     second_teams = []
+
+    #     for pool in pool_list:
+    #         ranked_teams = pool.compute_ranking()
+    #         first_teams.append(ranked_teams[0])
+    #         second_teams.append(ranked_teams[1])
+
+    #     random.shuffle(second_teams)
+
+    #     for i in range(len(first_teams)):
+    #         match = Match(team1=first_teams[i], team2=second_teams[i], pool=None, date=self.date, hour="10h - 12h", place=self.place)
+    #         match.save()
+    #         final_round.matches.add(match)
+    #         print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
+
 
 
 class Team(models.Model):
@@ -183,3 +205,6 @@ class FinalRound(models.Model):
             match = Match(team1=first_teams[i], team2=second_teams[i], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
             match.save()
             self.matches.add(match)
+            print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
+
+        self.save()  # Enregistrez les modifications

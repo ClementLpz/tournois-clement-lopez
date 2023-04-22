@@ -126,11 +126,21 @@ def update_comment(request, match_id, comment_id):
     context['form'] = form
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
 
-def final_round(request, tournament_id):
+
+def final_round(request, tournament_id, force=True):
+    print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
-    if created:
+    
+    if created or force:
+        print("créé")
         final_round.create_pairings()
+        final_round.refresh_from_db()  # Récupérer les données mises à jour depuis la base de données
 
-    context = {'final_round': final_round}
+    print(list(final_round.matches.all()))
+    
+    context = {'final_round': final_round, 'final_round_matches': final_round.matches.all()}
     return render(request, 'tournaments/final_round.html', user_authentication(request, context))
+
+
+

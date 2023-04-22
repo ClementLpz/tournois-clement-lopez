@@ -23,6 +23,10 @@
             <td>{{ match.hour }}</td>
             <td>{{ match.place }}</td>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Aucun match trouvé</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
