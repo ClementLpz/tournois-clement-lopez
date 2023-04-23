@@ -1,33 +1,54 @@
 {% extends "base.html" %}
+{% load mathfilters custom_filters %}
 
 {% block content %}
 <h1>Final Round - {{ final_round.tournament.name }}</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Match</th>
-            <th>Team 1</th>
-            <th>Team 2</th>
-            <th>Date</th>
-            <th>Hour</th>
-            <th>Place</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for match in final_round.matches.all %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ match.team1.name }}</td>
-            <td>{{ match.team2.name }}</td>
-            <td>{{ match.date }}</td>
-            <td>{{ match.hour }}</td>
-            <td>{{ match.place }}</td>
-        </tr>
+
+{% load static %}
+
+<style>
+    .tournament-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .round {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        margin: 0 20px;
+    }
+
+    .match {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+</style>
+{% with final_round.matches.all|length|log2 as n_rounds %}
+<div class="tournament-container">
+    {% for round in n_rounds|get_range %}
+    <div class="round">
+        {% for match in final_round.matches.all|get_matches_for_round:round %}
+            <div class="match">
+            <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
+            <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+            <div>Date: {{ match.date }}</div>
+            <div>Hour: {{ match.hour }}</div>
+            <div>Place: {{ match.place }}</div>
+        </div>
         {% empty %}
-        <tr>
-            <td colspan="6">Aucun match trouvé</td>
-        </tr>
+        <div class="match">
+            <div>Aucun match trouvé</div>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
+    </div>
+    {% endfor %}
+    {%endwith%}
+</div>
 {% endblock %}

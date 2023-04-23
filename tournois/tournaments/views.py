@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
+from math import log2
+
 
 from .models import Tournament, Pool, Match, Comment, FinalRound
 from .forms import CommentForm
@@ -127,11 +129,16 @@ def update_comment(request, match_id, comment_id):
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
 
 
-def final_round(request, tournament_id, force=False):
+
+
+
+def final_round(request, tournament_id, force=False, erase=False):
     print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
-    
+    if erase :
+        print("erase")
+        FinalRound.objects.filter(tournament=tournament).delete()
     if created or force:
         print("créé")
         final_round.create_pairings()
@@ -139,8 +146,14 @@ def final_round(request, tournament_id, force=False):
 
     print(list(final_round.matches.all()))
     
-    context = {'final_round': final_round, 'final_round_matches': final_round.matches.all()}
+    context = {
+            'final_round': final_round,
+            'final_round_matches': final_round.matches.all(),
+            'log2': log2,
+            'range': range
+        }    
     return render(request, 'tournaments/final_round.html', user_authentication(request, context))
+
 
 
 
