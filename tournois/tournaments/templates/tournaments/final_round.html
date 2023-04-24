@@ -7,10 +7,11 @@
 {% load static %}
 
 <style>
+  
     .tournament-container {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-start; /* Modification ici pour aligner les cellules à gauche */
     }
 
     .round {
@@ -28,27 +29,29 @@
         border-radius: 5px;
         padding: 5px;
         margin-bottom: 10px;
+        width: 150px;
+        text-align: center;
     }
-</style>
-{% with final_round.matches.all|length|log2 as n_rounds %}
+    </style>
+    
+ 
+<p>Total matches: {{ final_round.matches.all|length }}</p>
+
+<!-- {% for match in final_round.matches.all %}
+<p>Match ID: {{ match.id }}, Team 1: {{ match.team1.name }}, Team 2: {{ match.team2.name }}</p>
+{% endfor %} -->
+
 <div class="tournament-container">
-    {% for round in n_rounds|get_range %}
     <div class="round">
-        {% for match in final_round.matches.all|get_matches_for_round:round %}
-            <div class="match">
+    {% for match in final_round.matches.all %}
+        <div class="match">
             <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
             <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
             <div>Date: {{ match.date }}</div>
             <div>Hour: {{ match.hour }}</div>
             <div>Place: {{ match.place }}</div>
-        </div>
-        {% empty %}
-        <div class="match">
-            <div>Aucun match trouvé</div>
-        </div>
-        {% endfor %}
+         
     </div>
     {% endfor %}
-    {%endwith%}
 </div>
 {% endblock %}

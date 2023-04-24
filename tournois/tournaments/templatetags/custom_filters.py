@@ -13,8 +13,7 @@ def get_range(value):
 
 @register.filter
 def get_matches_for_round(matches, round):
-    start = (2 ** (round - 1)) - 1
-    end = (2 ** round) - 1
+    matches_per_round = 2 ** (round - 1)
+    start = sum(2 ** i for i in range(round - 1))
+    end = start + matches_per_round
     return matches[start:end]
-
-
