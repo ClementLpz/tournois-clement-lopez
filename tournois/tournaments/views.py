@@ -5,7 +5,7 @@ from math import log2
 
 
 from .models import Tournament, Pool, Match, Comment, FinalRound
-from .forms import CommentForm
+from .forms import CommentForm, MatchResultForm
 
 def user_authentication(request, context):
 
@@ -154,6 +154,23 @@ def final_round(request, tournament_id, force=False, erase=False):
         }    
     return render(request, 'tournaments/final_round.html', user_authentication(request, context))
 
+def update_match_result(request, match_id):
+    match = get_object_or_404(Match, pk=match_id)
 
+    if request.method == 'GET':
+        form = MatchResultForm(initial={'score1': match.score1, 'score2': match.score2})
+    elif request.method == 'POST':
+        form = MatchResultForm(request.POST)
+        if form.is_valid():
+            match.score1 = form.cleaned_data['score1']
+            match.score2 = form.cleaned_data['score2']
+            match.save()
+            return redirect('tournaments:match_details', match_id)
+    
+    context = {'match': match, 'form': form}
+    return render(request, 'tournaments/update_match_result.html', user_authentication(request, context))
 
-
+def generate_next_round(request, tournament_id):
+    final_round = get_object_or_404(FinalRound, tournament__id=tournament_id)
+    final_round.generate_next_round()
+    return redirect('tournaments:final_round', tournament_id)
