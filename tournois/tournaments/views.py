@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render, get_list_or_404, get_object_or_40
 from django.http import HttpResponse
 from django.utils import timezone
 
-from .models import Tournament, Pool, Match, Comment
+from .models import Tournament, Pool, Match, Comment, Team
 from .forms import CommentForm, ResearchForm
 
 def user_authentication(request, context):
@@ -42,6 +42,15 @@ def research(request):
         context = {'form' : form}
         if form.is_valid():
             context['research'] = form.cleaned_data['research']
+            context['teams'] = Team.objects.filter(name__contains = form.cleaned_data['research']).order_by('name')
+            context['matchs_team'] = Match.objects.filter(team1__name__contains = form.cleaned_data['research']).union(Match.objects.filter(team2__name__contains = form.cleaned_data['research']))
+            context['matchs_date'] = Match.objects.filter(date__contains = form.cleaned_data['research'])
+            if form.cleaned_data['research'].isdigit() :
+                print(int(form.cleaned_data['research']))
+                context['matchs_goals'] = Match.objects.filter(score1 = int(form.cleaned_data['research'])).union(Match.objects.filter(score2 = int(form.cleaned_data['research'])))
+            else :
+                print("not int")
+                context['matchs_goals'] = []
     
     return render(request,'tournaments/research.html', user_authentication(request, context))
 

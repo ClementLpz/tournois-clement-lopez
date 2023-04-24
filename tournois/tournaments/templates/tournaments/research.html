@@ -50,8 +50,83 @@ Extend site-wide base HTML template located in main templates/ dir
     {% endbuttons %}
 </form>
 
-<div class="row pb-3">
-    <h1>Results for research : {{ research }}</h1>
-</div>
+{% if not research|stringformat:"s" == "" %}
+
+    <div class="row pb-3">
+        <h1>Results for research : {{ research }}</h1>
+    </div>
+
+    <ul>
+
+        {% if teams %}
+            <li>
+                <div class="row pb-3">
+                    <h1>Teams by name :</h1> 
+                    
+                    <br> <br>
+
+                    <ul>
+                        {% for team in teams %}
+                            <li>{{ team.name }}</li> <br>
+                        {% endfor %}
+                    </ul>   
+
+                </div>
+            </li>
+        {% endif %}
+        
+        {% if matchs_team %}
+            <li>
+                <div class="row pb-3">
+                    <h1>Match by teams :</h1> 
+                    
+                    <br> <br>
+
+                    <ul>
+                        {% for match in matchs_team %}
+                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li> <br>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            </li>
+        {% endif %}
+        
+        {% if matchs_date %}
+            <li>
+                <div class="row pb-3">
+                    <h1>Match by date :</h1> 
+                    
+                    <br> <br>
+
+                    <ul>
+                        {% for match in matchs_date %}
+                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li><br>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            </li>
+        {% endif %}
+
+        {% if matchs_goals %}
+            <li>
+                <div class="row pb-3">
+                    <h1>Match by score :</h1> 
+                    
+                    <br> <br>
+
+                    <ul>
+                        {% for match in matchs_goals %}
+                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li><br>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            </li>
+        {% endif %}
+
+    </ul>
+{% endif %}
 
 {% endblock content %}
