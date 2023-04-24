@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% load bootstrap5 %}
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -36,7 +37,18 @@ Extend site-wide base HTML template located in main templates/ dir
     </div>
 </nav>
 
-<br> 
+<div class="row pb-3">
+    <br>
+</div>
+
+<form action="{% url 'tournaments:tournaments_list' %}" method="POST" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+
+    {% buttons %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    {% endbuttons %}
+</form>
 
 <div class="row pb-3">
     <h1>Tournaments</h1>

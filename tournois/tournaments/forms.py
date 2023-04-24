@@ -8,4 +8,4 @@ class CommentForm(forms.ModelForm):
         fields = ['message']
 
 class ResearchForm(forms.Form):
-    research = forms.CharField(label="Research", max_length=100)
+    research = forms.CharField(label="", max_length=100)
