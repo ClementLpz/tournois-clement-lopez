@@ -28,9 +28,19 @@ def tournaments_list(request):
     :param request: The incoming request
     """
 
+    if request.method == 'GET':
+        form = ResearchForm()
+    elif request.method == 'POST':
+        form = ResearchForm(request.POST)
+        if form.is_valid():
+            return redirect('tournaments:research')
+
     tournaments_list = get_list_or_404(Tournament)
     context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
+
+def research(request):
+    return HttpResponse("Research functionality coming soon")
 
 def tournament_details(request, tournament_id):
 
