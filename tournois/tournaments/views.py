@@ -28,26 +28,20 @@ def tournaments_list(request):
     :param request: The incoming request
     """
 
-    if request.method == 'GET':
-        form = ResearchForm()
-    elif request.method == 'POST':
-        form = ResearchForm(request.POST)
-        if form.is_valid():
-            context = {'form' : form, 'research' : form.cleaned_data['research']}
-            return render(request,'tournaments/research.html', user_authentication(request, context))
-
     tournaments_list = get_list_or_404(Tournament)
-    context = {'tournaments_list' : tournaments_list, 'form' : form}
+    context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
 def research(request):
 
     if request.method == 'GET':
         form = ResearchForm()
+        context = {'form' : form}
     elif request.method == 'POST':
         form = ResearchForm(request.POST)
+        context = {'form' : form}
         if form.is_valid():
-            context = {'form' : form, 'research' : form.cleaned_data['research']}
+            context['research'] = form.cleaned_data['research']
     
     return render(request,'tournaments/research.html', user_authentication(request, context))
 

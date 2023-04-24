@@ -41,14 +41,11 @@ Extend site-wide base HTML template located in main templates/ dir
     <br>
 </div>
 
-<form action="{% url 'tournaments:tournaments_list' %}" method="POST" class="form">
-    {% csrf_token %}
-    {% bootstrap_form form %}
+<a href="{% url 'tournaments:research' %}"><button type="submit" class="btn btn-danger navbar-btn">Go to research</button></a>
 
-    {% buttons %}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    {% endbuttons %}
-</form>
+<div class="row pb-3">
+    <br>
+</div>
 
 <div class="row pb-3">
     <h1>Tournaments</h1>
