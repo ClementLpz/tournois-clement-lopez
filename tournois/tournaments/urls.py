@@ -24,8 +24,4 @@ urlpatterns = [
     path('match/<int:match_id>/<int:comment_id>/', views.update_comment, name='update_comment'),
     
     path('<int:tournament_id>/final_round/', views.final_round, name='final_round'),
-    
-    path('match/<int:match_id>/update/', views.update_match_result, name='update_match_result'),
-    
-    path('<int:tournament_id>/generate_next_round/', views.generate_next_round, name='generate_next_round'),
 ]

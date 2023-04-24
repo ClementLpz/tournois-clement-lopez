@@ -6,8 +6,3 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['message']
-        
-        
-class MatchResultForm(forms.Form):
-    score1 = forms.IntegerField(label="Score de l'équipe 1")
-    score2 = forms.IntegerField(label="Score de l'équipe 2")

@@ -25,8 +25,6 @@ class Tournament(models.Model):
     def __str__(self):
         return self.name
     
-    
-    
     # def create_final_round(self, final_round):
     #     print("create_final_round called")  # Ajoutez cette ligne pour le débogage
     #     pool_list = list(self.pool_set.all())
@@ -210,28 +208,3 @@ class FinalRound(models.Model):
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
 
         self.save()  # Enregistrez les modifications
-        
-    def generate_next_round(self):
-        final_round = get_object_or_404(FinalRound, tournament=self.tournament)
-        previous_matches = final_round.matches.all()
-        print(list(previous_matches))
-
-        winning_teams = []
-
-        for match in previous_matches:
-            if match.score1 > match.score2:
-                print("case1")
-                winner = match.team1
-            else:
-                print("case2")
-                winner = match.team2
-
-            winning_teams.append(winner)
-            print(list(winning_teams))
-
-        next_round_matches = []
-
-        for i in range(0, len(winning_teams), 2):
-            match = Match(team1=winning_teams[i], team2=winning_teams[i + 1], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
-            match.save()
-            next_round_matches.append(match)
