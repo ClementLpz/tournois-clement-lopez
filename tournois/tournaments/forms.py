@@ -6,3 +6,6 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['message']
+
+class ResearchForm(forms.Form):
+    research = forms.CharField(label="Research", max_length=100)
