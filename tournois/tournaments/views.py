@@ -31,21 +31,25 @@ def tournaments_list(request):
     if request.method == 'GET':
         form = ResearchForm()
     elif request.method == 'POST':
-        print("ici")
         form = ResearchForm(request.POST)
-        print(form.is_valid())
         if form.is_valid():
-            print(form.cleaned_data['research'])
-            print("valid")
-            return redirect('tournaments:research')
+            context = {'form' : form, 'research' : form.cleaned_data['research']}
+            return render(request,'tournaments/research.html', user_authentication(request, context))
 
-    print("du coup on passe là")
     tournaments_list = get_list_or_404(Tournament)
     context = {'tournaments_list' : tournaments_list, 'form' : form}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
 def research(request):
-    return HttpResponse("Research functionality coming soon")
+
+    if request.method == 'GET':
+        form = ResearchForm()
+    elif request.method == 'POST':
+        form = ResearchForm(request.POST)
+        if form.is_valid():
+            context = {'form' : form, 'research' : form.cleaned_data['research']}
+    
+    return render(request,'tournaments/research.html', user_authentication(request, context))
 
 def tournament_details(request, tournament_id):
 
