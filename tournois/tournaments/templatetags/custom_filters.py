@@ -5,7 +5,13 @@ register = template.Library()
 
 @register.filter
 def log2(value):
-    return int(math.log2(value))
+    try:
+        # Convert the input value to a float
+        float_value = float(value)
+        return math.log2(float_value)
+    except ValueError:
+        # Return an error message if the conversion fails
+        return "Invalid input for log2 function"
 
 @register.filter
 def get_range(value):
@@ -17,3 +23,16 @@ def get_matches_for_round(matches, round):
     start = sum(2 ** i for i in range(round - 1))
     end = start + matches_per_round
     return matches[start:end]
+
+@register.filter
+def to_int(value):
+    return int(value)
+
+@register.filter
+def is_integer(value):
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
+

@@ -158,6 +158,14 @@ class Match(models.Model):
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
+    
+    def winner(self):
+        if self.score1 > self.score2:
+            return self.team1
+        elif self.score2 > self.score1:
+            return self.team2
+        else:
+            return None
 
 
 class Comment(models.Model):
@@ -208,3 +216,16 @@ class FinalRound(models.Model):
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
 
         self.save()  # Enregistrez les modifications
+        
+    def generate_next_round(self):
+        matches = self.matches.all()
+        winners = [match.winner() for match in matches]
+        new_matches = []
+
+        for i in range(0, len(winners), 2):
+            match = Match(team1=winners[i], team2=winners[i+1], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
+            match.save()
+            new_matches.append(match)
+
+        self.matches.set(new_matches)
+        self.save()
