@@ -84,7 +84,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
                     <ul>
                         {% for match in matchs_team %}
-                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li> <br>
+                            <li><a href="{% url 'tournaments:match_details' match.id %}">{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a> on {{ match.date }}</li> <br>
                         {% endfor %}
                     </ul>
 
@@ -101,7 +101,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
                     <ul>
                         {% for match in matchs_date %}
-                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li><br>
+                            <li><a href="{% url 'tournaments:match_details' match.id %}">{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a> on {{ match.date }}</li><br>
                         {% endfor %}
                     </ul>
 
@@ -118,7 +118,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
                     <ul>
                         {% for match in matchs_goals %}
-                            <li>{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }} on {{ match.date }}</li><br>
+                            <li><a href="{% url 'tournaments:match_details' match.id %}">{{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a> on {{ match.date }}</li><br>
                         {% endfor %}
                     </ul>
 
