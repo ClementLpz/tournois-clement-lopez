@@ -25,6 +25,10 @@ def get_matches_for_round(matches, round):
     return matches[start:end]
 
 @register.filter
+def matches_for_round(matches, round_number):
+    return matches.filter(round=round_number)
+
+@register.filter
 def to_int(value):
     return int(value)
 
@@ -35,4 +39,8 @@ def is_integer(value):
         return True
     except ValueError:
         return False
+    
+@register.filter
+def round(matches, r):
+    return [match for match in matches if match.round == r]
 

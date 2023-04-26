@@ -9,9 +9,14 @@
 <style>
     .tournament-container {
         display: flex;
+        flex-direction: column;
+    }
+
+    .round-container {
+        display: flex;
         flex-direction: row;
-        justify-content: flex-start;
-        /* Modification ici pour aligner les cellules à gauche */
+        justify-content: space-around;
+        margin-bottom: 20px;
     }
 
     .round {
@@ -56,16 +61,34 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="team1_score">Score de l'équipe 1 :</label>
-                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}" class="form-control" required>
+                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                        class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="team2_score">Score de l'équipe 2 :</label>
-                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}" class="form-control" required>                </div>
+                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                        class="form-control" required>
+                </div>
                 <button type="submit" class="btn btn-primary">Submit Scores</button>
             </form>
             {%endif%}
         </div>
-        
+
         {% endfor %}
     </div>
-    {% endblock %}
+    <div class="round">
+        {% for match in next_round_matches %}
+        {% if match.team1 and match.team2 %}
+        <div class="match">
+            <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
+            <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+            <div>Date: {{ match.date }}</div>
+            <div>Hour: {{ match.hour }}</div>
+            <div>Place: {{ match.place }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

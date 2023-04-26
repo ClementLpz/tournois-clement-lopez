@@ -155,6 +155,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
+    round = models.IntegerField(null=True)  
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
@@ -189,6 +190,7 @@ class FinalRound(models.Model):
     """
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     matches = models.ManyToManyField(Match)
+    rounds = models.IntegerField(default=1)  
 
     class Meta:
         db_table = "tournaments_finalround"
@@ -216,16 +218,46 @@ class FinalRound(models.Model):
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
 
         self.save()  # Enregistrez les modifications
+    
+    @staticmethod
+    def get_winners_from_previous_round(matches):
+        winners = []
+        for match in matches:
+            winner = match.winner()
+            if winner is not None:
+                winners.append(winner)
+        return winners
         
     def generate_next_round(self):
-        matches = self.matches.all()
-        winners = [match.winner() for match in matches]
+        winners = FinalRound.get_winners_from_previous_round(self.matches.all())
         new_matches = []
 
+        if len(winners) % 2 != 0:
+            print("Erreur : la liste des vainqueurs doit être de longueur paire.")
+            return
+
+        self.rounds += 1  # Incrémentez le champ rounds
+        self.save()
+
         for i in range(0, len(winners), 2):
-            match = Match(team1=winners[i], team2=winners[i+1], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
+            match = Match(team1=winners[i], team2=winners[i + 1], pool=None, date=self.tournament.date,
+                        hour="10h - 12h", place=self.tournament.place, round=self.rounds)  # Ajoutez le paramètre round
             match.save()
             new_matches.append(match)
-
-        self.matches.set(new_matches)
-        self.save()
+            self.matches.add(match)
+        
+    def get_next_round_matches(self):
+        next_round_matches = []
+        completed_matches = [m for m in self.matches.all() if m.winner() is not None]
+        if len(completed_matches) == self.matches.count():
+            for match in self.matches.all():
+                winner = match.winner()
+                if winner:
+                    next_round_match = Match.objects.filter(finalround=self, team1=winner).first()
+                    if next_round_match is None:
+                        next_round_match = Match.objects.filter(finalround=self, team2=winner).first()
+                    if next_round_match:
+                        next_round_matches.append(next_round_match)
+        return next_round_matches
+    
+    

@@ -21,7 +21,6 @@ def user_authentication(request, context):
     
     context['username'] = username
     return context
-
 def tournaments_list(request):
 
     """
@@ -148,55 +147,19 @@ def final_round(request, tournament_id, force=False, erase=False):
                 match.score1 = int(score1)
                 match.score2 = int(score2)
                 match.save()
-                # Vérifie si c'est la finale
-                if final_round.matches.count() == 1:
-                    winner = match.team1 if match.score1 > match.score2 else match.team2
-                    messages.success(request, f'{winner.name} a remporté le tournoi !')
-                else:
-                    if match.score1 > match.score2:
-                        winner = match.team1
-                    else:
-                        winner = match.team2
-
-                    # Recherchez un match dans le tour suivant avec l'équipe gagnante déjà inscrite
-                    next_round_match = Match.objects.filter(finalround=final_round, team1=winner).first()
-
-                    if next_round_match is None:
-                        next_round_match = Match.objects.filter(finalround=final_round, team2=winner).first()
-
-                    if next_round_match is None:
-                        # Si aucun match n'a été créé pour l'équipe gagnante, recherchez un match disponible
-                        available_match = Match.objects.filter(finalround=final_round, team1=None).first()
-
-                        if available_match is None:
-                            available_match = Match.objects.filter(finalround=final_round, team2=None).first()
-
-                        if available_match is None:
-                            # Si aucun match disponible n'est trouvé, créez un nouveau match avec l'équipe gagnante
-                            next_round_match = Match(finalround=final_round, team1=winner)
-                            next_round_match.save()
-                        else:
-                            # Si un match disponible est trouvé, ajoutez l'équipe gagnante au match
-                            if available_match.team1 is None:
-                                available_match.team1 = winner
-                            else:
-                                available_match.team2 = winner
-                            available_match.save()
-                    else:
-                        # Ajoutez l'équipe gagnante en tant qu'adversaire de l'équipe déjà inscrite
-                        if next_round_match.team1 is None:
-                            next_round_match.team1 = winner
-                        else:
-                            next_round_match.team2 = winner
-                        next_round_match.save()
-
+                # Nouveau code pour vérifier si tous les matchs du tour précédent sont terminés
+                completed_matches = [m for m in final_round.matches.all() if m.winner() is not None]
+                if len(completed_matches) == final_round.matches.count():
+                    final_round.generate_next_round()
+                    final_round.refresh_from_db()
 
     print(list(final_round.matches.all()))
-
+    next_round_matches = final_round.get_next_round_matches()
     context = {
-            'final_round': final_round,
-            'final_round_matches': final_round.matches.all(),
-            'log2': log2,
-            'range': range
-        }    
+        'final_round': final_round,
+        'final_round_matches': final_round.matches.all(),
+        'next_round_matches': next_round_matches,
+        'log2': log2,
+        'range': range
+    }
     return render(request, 'tournaments/final_round.html', user_authentication(request, context))
