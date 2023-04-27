@@ -58,29 +58,11 @@ Extend site-wide base HTML template located in main templates/ dir
 
     <table class="table table-striped">
 
-        <thead>
-            <tr>
-                {% if teams %}
-                    <th>Teams by name</th>
-                {% endif %}
-
-                {% if matchs_team %}
-                    <th>Match by team</th>
-                {% endif %}
-
-                {% if matchs_date %}
-                    <th>Match by date</th>
-                {% endif %}
-
-                {% if matchs_goals %}
-                    <th>Match by score</th>
-                {% endif %}
-            </tr>
-        </thead>
-
         <tbody>
-            <tr>
-                {% if teams %}
+
+            {% if teams %}
+                <tr>
+                    <th><h5>Teams by name : </h5></th>
                     <td>
                         <ul>
                             {% for team in teams %}
@@ -88,9 +70,12 @@ Extend site-wide base HTML template located in main templates/ dir
                             {% endfor %}
                         </ul>
                     </td>
-                {% endif %}
-
-                {% if matchs_team %}
+                </tr>
+            {% endif %}
+            
+            {% if matchs_team %}
+                <tr>
+                    <th><h5>Match by team : </h5></th>
                     <td>
                         <table class="table table-striped">
 
@@ -114,9 +99,12 @@ Extend site-wide base HTML template located in main templates/ dir
                     
                         </table>
                     </td>
-                {% endif %}
-
-                {% if matchs_date %}
+                </tr>
+            {% endif %}
+            
+            {% if matchs_date %}
+                <tr>
+                    <th><h5>Match by date : </h5></th>
                     <td>
                         <table class="table table-striped">
 
@@ -140,9 +128,12 @@ Extend site-wide base HTML template located in main templates/ dir
                     
                         </table>
                     </td>
-                {% endif %}
+                </tr>
+            {% endif %}
 
-                {% if matchs_goals %}
+            {% if matchs_goals %}
+                <tr>
+                    <th><h5>Match by score : </h5></th>
                     <td>
                         <table class="table table-striped">
 
@@ -166,8 +157,9 @@ Extend site-wide base HTML template located in main templates/ dir
                     
                         </table>
                     </td>
-                {% endif %}
-            </tr>
+                </tr>
+            {% endif %}
+            
         </tbody>
 
     </table>
