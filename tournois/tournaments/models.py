@@ -261,55 +261,47 @@ class FinalRound(models.Model):
         return next_round_matches
 
     def generate_next_round(self):
+        # Récupérer les matches du round précédent
         matches = self.matches.all()
-        winners = FinalRound.get_winners_from_previous_round(matches)
-        new_matches = []
 
+        # Récupérer les vainqueurs du round précédent
+        winners = FinalRound.get_winners_from_previous_round(matches)
+
+        # Vérifier que le nombre de vainqueurs est pair
         if len(winners) % 2 != 0:
             print("Erreur : la liste des vainqueurs doit être de longueur paire.")
             return
 
+        # Incrémenter le champ rounds
         self.rounds += 1
         self.save()
 
-        # Créer un set des matches déjà créés
-        existing_matches = set(matches)
+        # Créer une liste des équipes qui ont déjà joué dans ce round
+        teams_played = set()
 
-        # Créer une liste de tous les gagnants de la ronde précédente
-        previous_winners = list(winners)
+        # Créer une liste de nouveaux matches
+        new_matches = []
 
+        # Parcourir les vainqueurs par paires et créer un nouveau match pour chaque paire
         for i in range(0, len(winners), 2):
-            winner1 = winners[i]
-            winner2 = None
+            team1 = winners[i]
+            team2 = winners[i+1]
 
-            # Supprimer les gagnants de la ronde précédente de la liste des vainqueurs possibles
-            if winner1 in previous_winners:
-                previous_winners.remove(winner1)
-            if winner2 in previous_winners:
-                previous_winners.remove(winner2)
-
-            # Sélectionner un deuxième gagnant aléatoire de la liste des vainqueurs possibles
-            winner2 = random.choice(previous_winners)
-
-            # Vérifier si le match n'existe pas déjà
-            if not Match.objects.filter(team1=winner1, team2=winner2, pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place, round=self.rounds).exists():
-                match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+            # Vérifier que les deux équipes n'ont pas déjà joué dans ce round
+            if team1 not in teams_played and team2 not in teams_played:
+                # Créer le nouveau match
+                match = Match(team1=team1, team2=team2, pool=None, date=self.tournament.date,
                             hour="10h - 12h", place=self.tournament.place, round=self.rounds)
                 match.save()
                 new_matches.append(match)
                 self.matches.add(match)
-                existing_matches.add(match)
 
-            # Supprimer les gagnants du match de la liste des vainqueurs possibles
-            previous_winners.remove(winner1)
-            previous_winners.remove(winner2)
-
-        # Ajouter les matches existants à la liste des nouveaux matches
-        for match in matches:
-            if match not in existing_matches:
-                new_matches.append(match)
+                # Ajouter les équipes à la liste des équipes ayant joué dans ce round
+                teams_played.add(team1)
+                teams_played.add(team2)
 
         return new_matches
+
 
             
         
