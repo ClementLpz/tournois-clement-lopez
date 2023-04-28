@@ -126,6 +126,7 @@ def update_comment(request, match_id, comment_id):
     context['form'] = form
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
 
+
 def final_round(request, tournament_id, force=False, erase=False):
     print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
@@ -137,7 +138,7 @@ def final_round(request, tournament_id, force=False, erase=False):
         print("créé")
         final_round.create_pairings()
         final_round.refresh_from_db()  # Récupérer les données mises à jour depuis la base de données
-
+        
     if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
         for match in final_round.matches.all():
             match_id = str(match.id)
@@ -147,12 +148,10 @@ def final_round(request, tournament_id, force=False, erase=False):
                 match.score1 = int(score1)
                 match.score2 = int(score2)
                 match.save()
-                # Nouveau code pour vérifier si tous les matchs du tour précédent sont terminés
-                completed_matches = [m for m in final_round.matches.all() if m.winner() is not None]
-                if len(completed_matches) == final_round.matches.count():
-                    final_round.generate_next_round()
-                    final_round.refresh_from_db()
-
+                print(f"Updated scores for match {match_id}: {score1}-{score2}")  # Ajouter cette ligne
+        final_round.generate_next_round()
+        final_round.refresh_from_db()
+               
     print(list(final_round.matches.all()))
     next_round_matches = final_round.get_next_round_matches()
     context = {

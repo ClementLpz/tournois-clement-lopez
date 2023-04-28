@@ -140,7 +140,7 @@ class Pool(models.Model):
 
         return ranked_computed_teams
 
-            
+  
 class Match(models.Model):
 
     """
@@ -156,6 +156,9 @@ class Match(models.Model):
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
     round = models.IntegerField(null=True)  
+    
+    class Meta:
+        unique_together = (('team1', 'team2', 'round'),)
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
@@ -222,42 +225,106 @@ class FinalRound(models.Model):
     @staticmethod
     def get_winners_from_previous_round(matches):
         winners = []
+        print(f"Total matches: {len(matches)}")  # Ajouter cette ligne
         for match in matches:
+            print(f"Checking winner for match {match.id}: {match.team1.name} ({match.score1}) vs {match.team2.name} ({match.score2})")  # Corriger cette ligne
             winner = match.winner()
             if winner is not None:
                 winners.append(winner)
+                print(f"Winner found: {winner.name}")  # Ajouter cette ligne
+            else:
+                print(f"No winner found for match {match.id}")
+        print(f"Winners found: {winners}")
         return winners
-        
-    def generate_next_round(self):
-        winners = FinalRound.get_winners_from_previous_round(self.matches.all())
-        new_matches = []
-
-        if len(winners) % 2 != 0:
-            print("Erreur : la liste des vainqueurs doit être de longueur paire.")
-            return
-
-        self.rounds += 1  # Incrémentez le champ rounds
-        self.save()
-
-        for i in range(0, len(winners), 2):
-            match = Match(team1=winners[i], team2=winners[i + 1], pool=None, date=self.tournament.date,
-                        hour="10h - 12h", place=self.tournament.place, round=self.rounds)  # Ajoutez le paramètre round
-            match.save()
-            new_matches.append(match)
-            self.matches.add(match)
+    
+    # def get_next_round_matches(self):
+    #     next_round_matches = []
+    #     if self.rounds > 0:
+    #         next_round = self.rounds + 1
+    #         next_round_matches = self.matches.filter(round=next_round)
+    #     return next_round_matches
         
     def get_next_round_matches(self):
         next_round_matches = []
         completed_matches = [m for m in self.matches.all() if m.winner() is not None]
         if len(completed_matches) == self.matches.count():
-            for match in self.matches.all():
+            used_teams = []
+            for match in self.matches.filter(round=self.rounds + 1):
                 winner = match.winner()
-                if winner:
+                if winner and winner not in used_teams:
+                    used_teams.append(winner)
                     next_round_match = Match.objects.filter(finalround=self, team1=winner).first()
                     if next_round_match is None:
                         next_round_match = Match.objects.filter(finalround=self, team2=winner).first()
                     if next_round_match:
                         next_round_matches.append(next_round_match)
         return next_round_matches
+
+    def generate_next_round(self):
+        matches = self.matches.all()
+        winners = FinalRound.get_winners_from_previous_round(matches)
+        new_matches = []
+
+        if len(winners) % 2 != 0:
+            print("Erreur : la liste des vainqueurs doit être de longueur paire.")
+            return
+
+        self.rounds += 1
+        self.save()
+
+        # Créer un set des matches déjà créés
+        existing_matches = set(matches)
+
+        # Créer une liste de tous les gagnants de la ronde précédente
+        previous_winners = list(winners)
+
+        for i in range(0, len(winners), 2):
+            winner1 = winners[i]
+            winner2 = None
+
+            # Supprimer les gagnants de la ronde précédente de la liste des vainqueurs possibles
+            if winner1 in previous_winners:
+                previous_winners.remove(winner1)
+            if winner2 in previous_winners:
+                previous_winners.remove(winner2)
+
+            # Sélectionner un deuxième gagnant aléatoire de la liste des vainqueurs possibles
+            winner2 = random.choice(previous_winners)
+
+            # Vérifier si le match n'existe pas déjà
+            if not Match.objects.filter(team1=winner1, team2=winner2, pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place, round=self.rounds).exists():
+                match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+                            hour="10h - 12h", place=self.tournament.place, round=self.rounds)
+                match.save()
+                new_matches.append(match)
+                self.matches.add(match)
+                existing_matches.add(match)
+
+            # Supprimer les gagnants du match de la liste des vainqueurs possibles
+            previous_winners.remove(winner1)
+            previous_winners.remove(winner2)
+
+        # Ajouter les matches existants à la liste des nouveaux matches
+        for match in matches:
+            if match not in existing_matches:
+                new_matches.append(match)
+
+        return new_matches
+
+            
+        
+    # def get_next_round_matches(self):
+    #     next_round_matches = []
+    #     completed_matches = [m for m in self.matches.all() if m.winner() is not None]
+    #     if len(completed_matches) == self.matches.count():
+    #         for match in self.matches.all():
+    #             winner = match.winner()
+    #             if winner:
+    #                 next_round_match = Match.objects.filter(finalround=self, team1=winner).first()
+    #                 if next_round_match is None:
+    #                     next_round_match = Match.objects.filter(finalround=self, team2=winner).first()
+    #                 if next_round_match:
+    #                     next_round_matches.append(next_round_match)
+    #     return next_round_matches
     
     

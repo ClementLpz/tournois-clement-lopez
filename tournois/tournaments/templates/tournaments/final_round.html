@@ -73,11 +73,10 @@
             </form>
             {%endif%}
         </div>
-
         {% endfor %}
     </div>
     <div class="round">
-        {% for match in next_round_matches %}
+        {% for match in final_round.get_next_round_matches %}
         {% if match.team1 and match.team2 %}
         <div class="match">
             <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
