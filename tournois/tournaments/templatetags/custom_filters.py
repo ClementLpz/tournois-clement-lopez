@@ -44,23 +44,3 @@ def is_integer(value):
 def round(matches, r):
     return [match for match in matches if match.round == r]
 
-@register.filter
-def range_to_max(value):
-    return range(1, int(value) + 1)
-
-@register.filter
-def float_to_int(value):
-    return int(value)
-
-@register.filter
-def divided_by(value, divisor):
-    try:
-        return value / divisor
-    except (ZeroDivisionError, TypeError):
-        return None
-
-@register.filter
-def matches_for_round(matches, round_number):
-    return [match for match in matches if match.round == round_number]
-
-
