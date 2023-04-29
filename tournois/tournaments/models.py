@@ -259,51 +259,34 @@ class FinalRound(models.Model):
                     if next_round_match:
                         next_round_matches.append(next_round_match)
         return next_round_matches
+    
+    
 
     def generate_next_round(self):
-        # Récupérer les matches du round précédent
         matches = self.matches.all()
-
-        # Récupérer les vainqueurs du round précédent
         winners = FinalRound.get_winners_from_previous_round(matches)
 
-        # Vérifier que le nombre de vainqueurs est pair
         if len(winners) % 2 != 0:
             print("Erreur : la liste des vainqueurs doit être de longueur paire.")
             return
 
-        # Incrémenter le champ rounds
+        # Augmenter le nombre de rounds et sauvegarder
         self.rounds += 1
         self.save()
 
-        # Créer une liste des équipes qui ont déjà joué dans ce round
-        teams_played = set()
+        # Créer un match avec les deux derniers vainqueurs uniquement
+        winner1, winner2 = winners[-2], winners[-1]
+        match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+                    hour="10h - 12h", place=self.tournament.place, round=self.rounds)
+        match.save()
+        self.matches.add(match)
 
-        # Créer une liste de nouveaux matches
-        new_matches = []
-
-        # Parcourir les vainqueurs par paires et créer un nouveau match pour chaque paire
-        for i in range(0, len(winners), 2):
-            team1 = winners[i]
-            team2 = winners[i+1]
-
-            # Vérifier que les deux équipes n'ont pas déjà joué dans ce round
-            if team1 not in teams_played and team2 not in teams_played:
-                # Créer le nouveau match
-                match = Match(team1=team1, team2=team2, pool=None, date=self.tournament.date,
-                            hour="10h - 12h", place=self.tournament.place, round=self.rounds)
-                match.save()
-                new_matches.append(match)
-                self.matches.add(match)
-
-                # Ajouter les équipes à la liste des équipes ayant joué dans ce round
-                teams_played.add(team1)
-                teams_played.add(team2)
-
-        return new_matches
+        return self.matches.all()
 
 
-            
+
+
+
         
     # def get_next_round_matches(self):
     #     next_round_matches = []
