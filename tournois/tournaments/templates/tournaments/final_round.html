@@ -9,14 +9,9 @@
 <style>
     .tournament-container {
         display: flex;
-        flex-direction: column;
-    }
-
-    .round-container {
-        display: flex;
         flex-direction: row;
         justify-content: space-around;
-        margin-bottom: 20px;
+        flex-wrap: wrap;
     }
 
     .round {
@@ -39,16 +34,18 @@
     }
 </style>
 
-
 <p>Total matches: {{ final_round.matches.all|length }}</p>
 
-<!-- {% for match in final_round.matches.all %}
-<p>Match ID: {{ match.id }}, Team 1: {{ match.team1.name }}, Team 2: {{ match.team2.name }}</p>
-{% endfor %} -->
 
+{% with total_matches=final_round.matches.all|length %}
+{% with max_round=total_matches|log2 %}
 <div class="tournament-container">
+    {% for round_num in max_round|range_to_max %}
     <div class="round">
-        {% for match in final_round.matches.all %}
+        <h2>Round {{ round_num }}</h2>
+        {% with match_count=final_round.matches.all|length %}
+        {% with matches_to_show=match_count|divided_by:2|round %}
+        {% for match in final_round.matches.all|slice:":matches_to_show" %}
         <div class="match">
             <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
             <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
@@ -71,23 +68,14 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit Scores</button>
             </form>
-            {%endif%}
+            {% endif %}
         </div>
         {% endfor %}
+        {% endwith %}
+        {% endwith %}
     </div>
-    <div class="round">
-        {% for match in final_round.get_next_round_matches %}
-        {% if match.team1 and match.team2 %}
-        <div class="match">
-            <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
-            <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
-            <div>Date: {{ match.date }}</div>
-            <div>Hour: {{ match.hour }}</div>
-            <div>Place: {{ match.place }}</div>
-        </div>
-        {% endif %}
-        {% endfor %}
-    </div>
+    {% endfor %}
 </div>
-
-{% endblock %}
+{% endwith %}
+{% endwith %}
+{%endblock%}

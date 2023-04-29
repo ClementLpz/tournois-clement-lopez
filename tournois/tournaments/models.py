@@ -259,8 +259,6 @@ class FinalRound(models.Model):
                     if next_round_match:
                         next_round_matches.append(next_round_match)
         return next_round_matches
-    
-    
 
     def generate_next_round(self):
         matches = self.matches.all()
