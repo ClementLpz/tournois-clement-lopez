@@ -44,13 +44,3 @@ def is_integer(value):
 def round(matches, r):
     return [match for match in matches if match.round == r]
 
-@register.filter
-def divide_by_two(value):
-    try:
-        return int(value / 2)
-    except (TypeError, ValueError):
-        return 0
-    
-@register.filter
-def range_to_max(value):
-    return range(1, int(value) + 1)
