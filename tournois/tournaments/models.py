@@ -194,9 +194,11 @@ class FinalRound(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     matches = models.ManyToManyField(Match)
     rounds = models.IntegerField(default=1)  
+    total_first_round_matches = models.IntegerField(default=0)
 
     class Meta:
         db_table = "tournaments_finalround"
+       
 
     def __str__(self):
         return "Final Round for: " + str(self.tournament)
@@ -220,6 +222,7 @@ class FinalRound(models.Model):
             self.matches.add(match)
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
 
+        self.total_first_round_matches = len(first_teams)
         self.save()  # Enregistrez les modifications
     
     @staticmethod
@@ -274,14 +277,17 @@ class FinalRound(models.Model):
         self.rounds += 1
         self.save()
 
-        # Créer un match avec les deux derniers vainqueurs uniquement
+        # Créer un match avec les deux derniers vainqueurs uniquement s'il n'existe pas déjà
         winner1, winner2 = winners[-2], winners[-1]
-        match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
-                    hour="10h - 12h", place=self.tournament.place, round=self.rounds)
-        match.save()
-        self.matches.add(match)
+        existing_match = Match.objects.filter(team1=winner1, team2=winner2, round=self.rounds).first()
+        if not existing_match:
+            match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+                        hour="10h - 12h", place=self.tournament.place, round=self.rounds)
+            match.save()
+            self.matches.add(match)
 
         return self.matches.all()
+
 
 
 

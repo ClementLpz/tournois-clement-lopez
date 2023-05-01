@@ -44,3 +44,7 @@ def is_integer(value):
 def round(matches, r):
     return [match for match in matches if match.round == r]
 
+
+@register.filter
+def pow2(value):
+    return 2 ** value
