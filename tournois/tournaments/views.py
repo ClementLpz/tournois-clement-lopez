@@ -5,6 +5,7 @@ from math import log2
 from django.contrib import messages
 from .models import Tournament, Pool, Match, Comment, FinalRound
 from .forms import CommentForm
+from django.core.cache import cache
 
 def user_authentication(request, context):
 
@@ -129,6 +130,8 @@ def update_comment(request, match_id, comment_id):
 
 def final_round(request, tournament_id, force=False, erase=False):
     print("début")
+    cache_key = 'final_round_matches_number'
+    final_round_matches_number = cache.get(cache_key)
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
     if erase:
@@ -159,6 +162,8 @@ def final_round(request, tournament_id, force=False, erase=False):
         'final_round_matches': final_round.matches.all(),
         'next_round_matches': next_round_matches,
         'log2': log2,
+        'final_round_matches_number': final_round_matches_number,
         'range': range
     }
     return render(request, 'tournaments/final_round.html', user_authentication(request, context))
+

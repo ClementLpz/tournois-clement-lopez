@@ -45,39 +45,48 @@
 <!-- {% for match in final_round.matches.all %}
 <p>Match ID: {{ match.id }}, Team 1: {{ match.team1.name }}, Team 2: {{ match.team2.name }}</p>
 {% endfor %} -->
-
+{% with total_matches=final_round.matches.all|length %}
+{% with constante=total_matches %}
+{% with match_counter=0 %}
 <div class="tournament-container">
-    <div class="round">
-        {% for match in final_round.matches.all %}
-        <div class="match">
-            <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
-            <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
-            <div>Date: {{ match.date }}</div>
-            <div>Hour: {{ match.hour }}</div>
-            <div>Place: {{ match.place }}</div>
+    <div class="'rounds-container">
+        <div class="round">
+            {% for match in final_round.matches.all %}
+            {% if match_counter < constante %}
+            <div class="match">
+                <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
+                <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+                <div>Date: {{ match.date }}</div>
+                <div>Hour: {{ match.hour }}</div>
+                <div>Place: {{ match.place }}</div>
 
-            {% if user.is_authenticated and user.is_superuser %}
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="team1_score">Score de l'équipe 1 :</label>
-                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
-                        class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="team2_score">Score de l'équipe 2 :</label>
-                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
-                        class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Scores</button>
-            </form>
-            {%endif%}
+                {% if user.is_authenticated and user.is_superuser %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="team1_score">Score de l'équipe 1 :</label>
+                        <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="team2_score">Score de l'équipe 2 :</label>
+                        <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                            class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Scores</button>
+                </form>
+                {% set match_counter=match_counter|add:1 %}
+                {%endif%}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-    <div class="round">
-        {% for match in final_round.get_next_round_matches %}
-        {% if match.team1 and match.team2 %}
+
+    <!-- Round 2 -->
+    
+        <div class="round">
+            {% for match in final_round.matches.all %}
+            {% if match_counter >= constante and match_counter < constante+constante//2 %}
         <div class="match">
             <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
             <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
@@ -85,9 +94,15 @@
             <div>Hour: {{ match.hour }}</div>
             <div>Place: {{ match.place }}</div>
         </div>
+        {% set match_counter=match_counter|add:1 %}
         {% endif %}
         {% endfor %}
-    </div>
-</div>
+        </div>
+        {% endif %}
 
+
+    {%endwith%}
+</div>
+{%endwith%}
+{%endwith%}
 {% endblock %}

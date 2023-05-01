@@ -2,6 +2,7 @@ import random
 from django.db import models
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
 import datetime
 from django.db.models.signals import post_save
@@ -197,6 +198,7 @@ class FinalRound(models.Model):
 
     class Meta:
         db_table = "tournaments_finalround"
+       
 
     def __str__(self):
         return "Final Round for: " + str(self.tournament)
@@ -220,7 +222,12 @@ class FinalRound(models.Model):
             self.matches.add(match)
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
 
+        self.total_first_round_matches = len(first_teams)
         self.save()  # Enregistrez les modifications
+        
+        final_round_matches_number = len(first_teams) # Remplacez cette valeur par le nombre de matchs que vous voulez stocker
+        cache_key = 'final_round_matches_number'
+        cache.set(cache_key, final_round_matches_number, timeout=None)
     
     @staticmethod
     def get_winners_from_previous_round(matches):
@@ -274,14 +281,17 @@ class FinalRound(models.Model):
         self.rounds += 1
         self.save()
 
-        # Créer un match avec les deux derniers vainqueurs uniquement
+        # Créer un match avec les deux derniers vainqueurs uniquement s'il n'existe pas déjà
         winner1, winner2 = winners[-2], winners[-1]
-        match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
-                    hour="10h - 12h", place=self.tournament.place, round=self.rounds)
-        match.save()
-        self.matches.add(match)
+        existing_match = Match.objects.filter(team1=winner1, team2=winner2, round=self.rounds).first()
+        if not existing_match:
+            match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+                        hour="10h - 12h", place=self.tournament.place, round=self.rounds)
+            match.save()
+            self.matches.add(match)
 
         return self.matches.all()
+
 
 
 
