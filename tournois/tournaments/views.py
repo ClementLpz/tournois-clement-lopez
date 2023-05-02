@@ -42,7 +42,7 @@ def tournament_details(request, tournament_id):
     """
 
     tournament = get_object_or_404(Tournament, pk=tournament_id)
-    context = {'tournament' : tournament}
+    context = {'tournament' : tournament, 'tournament_id' : tournament_id}
     return render(request,'tournaments/tournament_details.html', user_authentication(request, context))
 
 def compute_matches(request, pool_id, compute_matches):
@@ -172,7 +172,13 @@ def update_comment_finals(request, match_id, comment_id):
     return render(request, 'tournaments/match_details_finals.html', user_authentication(request, context))
 
 
-def final_round(request, tournament_id, force=False, erase=False):
+def final_round(request, tournament_id):
+    force = False
+    erase = False
+    if request.method == "POST" and "reset_pairings" in request.POST:
+        force = True
+        erase = True
+        
     print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
@@ -187,8 +193,10 @@ def final_round(request, tournament_id, force=False, erase=False):
         if erase:
             print("erase")
             FinalRound.objects.filter(tournament=tournament).delete()
+        
         if created or force:
             print("créé")
+            final_round = FinalRound.objects.create(tournament=tournament)
             final_round.create_pairings()
             final_round.refresh_from_db()
 
@@ -246,6 +254,7 @@ def final_round(request, tournament_id, force=False, erase=False):
             'match_col4' : match_col4,
             'match_col5' : match_col5,
             'match_col6' :match_col6,
+            'tournament_id': tournament_id,
             'next_round_matches': final_round.get_next_round_matches(),
             'log2': log2,
             'range': range

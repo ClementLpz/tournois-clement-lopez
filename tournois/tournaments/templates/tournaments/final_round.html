@@ -60,6 +60,17 @@
 
 <p>Total matches: {{ final_round.matches.all|length }}</p>
 
+<!-- Reset pairings -->
+{% if user.is_authenticated and user.is_superuser %}
+<form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
+    <input type="hidden" name="reset_pairings" value="true">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Reset pairings</button>
+  </form>
+  
+{% endif %}
+
+
 <div class="tournament-container">
     <!-- Round 1 -->
     <div class="round">
@@ -107,6 +118,7 @@
         {% endfor %}
     </div>
 
+{% if match_col2%}
 <!-- Round 2 -->
 <div class="round">
     <h2><b>Round 2</b></h2>
@@ -149,8 +161,10 @@
     </div>
     {% endfor %}
 </div>
+{%endif%}
 
 <!-- Round 3 -->
+{% if match_col3%}
 <div class="round">
     <h2><b>Round 3</b></h2>
     {% for match in match_col3 %}
@@ -193,8 +207,10 @@
     </div>
     {% endfor %}
 </div>
+{%endif%}
 
 <!-- Round 4 -->
+{% if match_col4%}
 <div class="round">
     <h2><b>Round 4</b></h2>
     {% for match in match_col4 %}
@@ -238,8 +254,11 @@
     </div>
     {% endfor %}
 </div>
+{%endif%}
+
 
 <!-- Round 5 -->
+{% if match_col5%}
 <div class="round">
     <h2><b>Round 5</b></h2>
     {% for match in match_col5 %}
@@ -283,8 +302,11 @@
     </div>
     {% endfor %}
 </div>
+{%endif%}
+
 
 <!-- Round 6 -->
+{% if match_col6%}
 <div class="round">
     <h2><b>Round 6</b></h2>
     {% for match in match_col6 %}
@@ -328,6 +350,8 @@
     </div>
     {% endfor %}
 </div>
+{%endif%}
+
 
 </div>
 {%endblock%}
