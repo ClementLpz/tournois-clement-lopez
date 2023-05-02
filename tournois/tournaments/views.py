@@ -131,14 +131,17 @@ def final_round(request, tournament_id, force=False, erase=False):
     print("début")
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
+    TOTAL_MATCHES= final_round.get_total_matches()
+    print (TOTAL_MATCHES)
+    
     if erase:
         print("erase")
         FinalRound.objects.filter(tournament=tournament).delete()
     if created or force:
         print("créé")
         final_round.create_pairings()
-        final_round.refresh_from_db()  # Récupérer les données mises à jour depuis la base de données
-        
+        final_round.refresh_from_db()
+
     if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
         for match in final_round.matches.all():
             match_id = str(match.id)
@@ -148,16 +151,46 @@ def final_round(request, tournament_id, force=False, erase=False):
                 match.score1 = int(score1)
                 match.score2 = int(score2)
                 match.save()
-                print(f"Updated scores for match {match_id}: {score1}-{score2}")  # Ajouter cette ligne
+                print(f"Updated scores for match {match_id}: {score1}-{score2}")
         final_round.generate_next_round()
         final_round.refresh_from_db()
-               
+
     print(list(final_round.matches.all()))
     next_round_matches = final_round.get_next_round_matches()
+    
+    matches = list(final_round.matches.all())
+    
+    # Stocker le nombre total de matches dans une constante
+
+    # Créer des arraylists pour les différentes colonnes
+    match_col1 = []
+    match_col2 = []
+    match_col3 =[]
+    match_col4=[]
+    
+    for idx, match in enumerate(final_round.matches.all()):
+        if idx < TOTAL_MATCHES:
+            match_col1.append(match)
+        elif TOTAL_MATCHES <= idx < (TOTAL_MATCHES * 1.5):
+            match_col2.append(match)
+        
+        elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.75):
+            match_col3.append(match)
+            
+        elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.875):
+            match_col4.append(match)
+            
+    
+    print (list(match_col1))
+    print (list(match_col2))
+    print (list(match_col3))
+    print (list(match_col4))
+
     context = {
         'final_round': final_round,
-        'final_round_matches': final_round.matches.all(),
-        'next_round_matches': next_round_matches,
+        'match_col1': match_col1,
+        'match_col2': match_col2,
+        'next_round_matches': final_round.get_next_round_matches(),
         'log2': log2,
         'range': range
     }

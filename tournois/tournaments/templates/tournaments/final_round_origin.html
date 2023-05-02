@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load mathfilters custom_filters %}
+
+{% block content %}
+    <h1>Final Round - {{ final_round.tournament.name }}</h1>
+
+    {% load static %}
+    <style>
+        .tournament-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin: 0 20px;
+        }
+
+        .match {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 150px;
+            text-align: center;
+        }
+    </style>
+
+    <p>Total matches: {{ final_round.matches.all|length }}</p>
+    <div class="tournament-container">
+        {% with matches=final_round.matches.all %}
+            {% with total_matches=matches|length %}
+                {% with const_total_matches=8 %}
+                    {% if total_matches >= 8 %}
+                        <!-- Round 1 -->
+                        <div class="round">
+                            {% for match in matches %}
+                                {% if forloop.counter <= 8 %}
+                                    <div class="match">
+                                        <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
+                                        <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+                                        <div>Date: {{ match.date }}</div>
+                                        <div>Hour: {{ match.hour }}</div>
+                                        <div>Place: {{ match.place }}</div>
+
+                                        {% if user.is_authenticated and user.is_superuser %}
+                                            <form method="POST">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="team1_score">Score de l'équipe 1 :</label>
+                                                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="team2_score">Score de l'équipe 2 :</label>
+                                                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Scores</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                         <!-- Round 2 -->
+                         <div class="round">
+                            {% for match in final_round.get_next_round_matches %}
+                                {% if forloop.counter <= 4 %}
+                                    <div class="match">
+                                        <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
+                                        <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+                                        <div>Date: {{ match.date }}</div>
+                                        <div>Hour: {{ match.hour }}</div>
+                                        <div>Place: {{ match.place }}</div>
+
+                                        {% if user.is_authenticated and user.is_superuser %}
+                                            <form method="POST">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="team1_score">Score de l'équipe 1 :</label>
+                                                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="team2_score">Score de l'équipe 2 :</label>
+                                                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                                                        class="form-control" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit Scores</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endwith %}
+        {% endwith %}
+    </div>
+    {%endblock%}

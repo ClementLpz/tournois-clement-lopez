@@ -219,8 +219,13 @@ class FinalRound(models.Model):
             match.save()
             self.matches.add(match)
             print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
-
+        
         self.save()  # Enregistrez les modifications
+        
+    def get_total_matches(self):
+        print("total matches called")
+        pool_list = list(self.tournament.pool_set.all())
+        return len(pool_list)
     
     @staticmethod
     def get_winners_from_previous_round(matches):
@@ -237,12 +242,7 @@ class FinalRound(models.Model):
         print(f"Winners found: {winners}")
         return winners
     
-    # def get_next_round_matches(self):
-    #     next_round_matches = []
-    #     if self.rounds > 0:
-    #         next_round = self.rounds + 1
-    #         next_round_matches = self.matches.filter(round=next_round)
-    #     return next_round_matches
+    
         
     def get_next_round_matches(self):
         next_round_matches = []
@@ -260,46 +260,30 @@ class FinalRound(models.Model):
                         next_round_matches.append(next_round_match)
         return next_round_matches
     
-    
-
     def generate_next_round(self):
+        print("generate next round called")
         matches = self.matches.all()
         winners = FinalRound.get_winners_from_previous_round(matches)
+        print(f"winner = {winners}")
+        print(f"matches ={matches}")
 
         if len(winners) % 2 != 0:
             print("Erreur : la liste des vainqueurs doit être de longueur paire.")
             return
-
-        # Augmenter le nombre de rounds et sauvegarder
-        self.rounds += 1
-        self.save()
-
-        # Créer un match avec les deux derniers vainqueurs uniquement
-        winner1, winner2 = winners[-2], winners[-1]
-        match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
-                    hour="10h - 12h", place=self.tournament.place, round=self.rounds)
-        match.save()
-        self.matches.add(match)
-
-        return self.matches.all()
-
-
-
-
-
         
-    # def get_next_round_matches(self):
-    #     next_round_matches = []
-    #     completed_matches = [m for m in self.matches.all() if m.winner() is not None]
-    #     if len(completed_matches) == self.matches.count():
-    #         for match in self.matches.all():
-    #             winner = match.winner()
-    #             if winner:
-    #                 next_round_match = Match.objects.filter(finalround=self, team1=winner).first()
-    #                 if next_round_match is None:
-    #                     next_round_match = Match.objects.filter(finalround=self, team2=winner).first()
-    #                 if next_round_match:
-    #                     next_round_matches.append(next_round_match)
-    #     return next_round_matches
-    
+        else : 
+
+            # Augmenter le nombre de rounds et sauvegarder
+            self.rounds += 1
+            self.save()
+
+            # Créer un match avec les deux derniers vainqueurs uniquement
+            winner1, winner2 = winners[-2], winners[-1]
+            match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
+                        hour="10h - 12h", place=self.tournament.place, round=self.rounds)
+            match.save()
+            self.matches.add(match)
+
+            return self.matches.all()
+
     

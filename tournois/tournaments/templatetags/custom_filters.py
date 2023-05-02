@@ -44,3 +44,6 @@ def is_integer(value):
 def round(matches, r):
     return [match for match in matches if match.round == r]
 
+@register.filter
+def add_half(value):
+    return int(value + value/2)
