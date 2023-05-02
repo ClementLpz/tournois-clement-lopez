@@ -1,3 +1,4 @@
+import math
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
@@ -134,66 +135,65 @@ def final_round(request, tournament_id, force=False, erase=False):
     TOTAL_MATCHES= final_round.get_total_matches()
     print (TOTAL_MATCHES)
     
-    if erase:
-        print("erase")
-        FinalRound.objects.filter(tournament=tournament).delete()
-    if created or force:
-        print("créé")
-        final_round.create_pairings()
-        final_round.refresh_from_db()
-
-    if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
-        for match in final_round.matches.all():
-            match_id = str(match.id)
-            score1 = request.POST.get(f'team1_score-{match_id}')
-            score2 = request.POST.get(f'team2_score-{match_id}')
-            if score1 is not None and score2 is not None:
-                match.score1 = int(score1)
-                match.score2 = int(score2)
-                match.save()
-                print(f"Updated scores for match {match_id}: {score1}-{score2}")
-        final_round.generate_next_round()
-        final_round.refresh_from_db()
-
-    print(list(final_round.matches.all()))
-    next_round_matches = final_round.get_next_round_matches()
+    if not math.log2(TOTAL_MATCHES).is_integer():
+        messages.error(request, "Le nombre total de matchs doit être un multiple de 4.")
+        return redirect('tournaments:pool_details')
     
-    matches = list(final_round.matches.all())
-    
-    # Stocker le nombre total de matches dans une constante
+    else: 
+        if erase:
+            print("erase")
+            FinalRound.objects.filter(tournament=tournament).delete()
+        if created or force:
+            print("créé")
+            final_round.create_pairings()
+            final_round.refresh_from_db()
 
-    # Créer des arraylists pour les différentes colonnes
-    match_col1 = []
-    match_col2 = []
-    match_col3 =[]
-    match_col4=[]
-    
-    for idx, match in enumerate(final_round.matches.all()):
-        if idx < TOTAL_MATCHES:
-            match_col1.append(match)
-        elif TOTAL_MATCHES <= idx < (TOTAL_MATCHES * 1.5):
-            match_col2.append(match)
+        if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
+            for match in final_round.matches.all():
+                match_id = str(match.id)
+                score1 = request.POST.get(f'team1_score-{match_id}')
+                score2 = request.POST.get(f'team2_score-{match_id}')
+                if score1 is not None and score2 is not None:
+                    match.score1 = int(score1)
+                    match.score2 = int(score2)
+                    match.save()
+                    print(f"Updated scores for match {match_id}: {score1}-{score2}")
+            final_round.generate_next_round()
+            final_round.refresh_from_db()
+
+        print(list(final_round.matches.all()))
+        next_round_matches = final_round.get_next_round_matches()
         
-        elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.75):
-            match_col3.append(match)
-            
-        elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.875):
-            match_col4.append(match)
-            
-    
-    print (list(match_col1))
-    print (list(match_col2))
-    print (list(match_col3))
-    print (list(match_col4))
+        matches = list(final_round.matches.all())
+        
+        # Stocker le nombre total de matches dans une constante
 
-    context = {
-        'final_round': final_round,
-        'match_col1': match_col1,
-        'match_col2': match_col2,
-        'match_col3' : match_col3,
-        'match_col4' : match_col4,
-        'next_round_matches': final_round.get_next_round_matches(),
-        'log2': log2,
-        'range': range
-    }
-    return render(request, 'tournaments/final_round.html', user_authentication(request, context))
+        # Créer des arraylists pour les différentes colonnes
+        match_col1 = []
+        match_col2 = []
+        match_col3 =[]
+        match_col4=[]
+        
+        for idx, match in enumerate(final_round.matches.all()):
+            if idx < TOTAL_MATCHES:
+                match_col1.append(match)
+            elif TOTAL_MATCHES <= idx < (TOTAL_MATCHES * 1.5):
+                match_col2.append(match)
+            
+            elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.75):
+                match_col3.append(match)
+                
+            elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.875):
+                match_col4.append(match)
+                
+        context = {
+            'final_round': final_round,
+            'match_col1': match_col1,
+            'match_col2': match_col2,
+            'match_col3' : match_col3,
+            'match_col4' : match_col4,
+            'next_round_matches': final_round.get_next_round_matches(),
+            'log2': log2,
+            'range': range
+        }
+        return render(request, 'tournaments/final_round.html', user_authentication(request, context))

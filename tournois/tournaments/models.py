@@ -241,8 +241,6 @@ class FinalRound(models.Model):
                 print(f"No winner found for match {match.id}")
         print(f"Winners found: {winners}")
         return winners
-    
-    
         
     def get_next_round_matches(self):
         next_round_matches = []
@@ -272,7 +270,6 @@ class FinalRound(models.Model):
             return
         
         else : 
-
             # Augmenter le nombre de rounds et sauvegarder
             self.rounds += 1
             self.save()
@@ -283,7 +280,4 @@ class FinalRound(models.Model):
                         hour="10h - 12h", place=self.tournament.place, round=self.rounds)
             match.save()
             self.matches.add(match)
-
             return self.matches.all()
-
-    
