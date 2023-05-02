@@ -179,8 +179,8 @@ def final_round(request, tournament_id, force=False, erase=False):
     TOTAL_MATCHES= final_round.get_total_matches()
     print (TOTAL_MATCHES)
     
-    if not math.log2(TOTAL_MATCHES).is_integer():
-        messages.error(request, "Le nombre total de matchs doit être un multiple de 4.")
+    if (not math.log2(TOTAL_MATCHES).is_integer()) or (TOTAL_MATCHES>32):
+        messages.error(request, "The total number of matches must be a power of 2 and inferior to 32.")
         return redirect('tournaments:pool_details')
     
     else: 
@@ -217,6 +217,8 @@ def final_round(request, tournament_id, force=False, erase=False):
         match_col2 = []
         match_col3 =[]
         match_col4=[]
+        match_col5=[]
+        match_col6=[]
         
         for idx, match in enumerate(final_round.matches.all()):
             if idx < TOTAL_MATCHES:
@@ -230,12 +232,20 @@ def final_round(request, tournament_id, force=False, erase=False):
             elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.875):
                 match_col4.append(match)
                 
+            elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.9375):
+                match_col5.append(match)
+            
+            elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.96875):
+                match_col6.append(match)
+                
         context = {
             'final_round': final_round,
             'match_col1': match_col1,
             'match_col2': match_col2,
             'match_col3' : match_col3,
             'match_col4' : match_col4,
+            'match_col5' : match_col5,
+            'match_col6' :match_col6,
             'next_round_matches': final_round.get_next_round_matches(),
             'log2': log2,
             'range': range

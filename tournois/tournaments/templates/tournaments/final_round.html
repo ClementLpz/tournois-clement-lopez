@@ -70,7 +70,7 @@
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team1.name }}
                 </a></b>
-                {% if match.score1 %}({{ match.score1 }}){% endif %}
+                {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
             </div>
             <div>
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
@@ -108,8 +108,15 @@
     <h2><b>Round 2</b></h2>
     {% for match in match_col2 %}
     <div class="match">
-        <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
-        <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+        <div>
+        <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+            {{ match.team1.name }}
+        </a></b>
+        {% if match.score1 %}({{ match.score1 }})   //   {% endif %}
+        <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+            {{ match.team2.name }}
+        </a></b> {% if match.score2 %}({{ match.score2 }}){% endif %}
+    </div>
         <div>Date: {{ match.date }}</div>
         <div>Hour: {{ match.hour }}</div>
         <div>Place: {{ match.place }}</div>
@@ -139,8 +146,17 @@
     <h2><b>Round 3</b></h2>
     {% for match in match_col3 %}
     <div class="match">
-        <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
-        <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+                <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                    {{ match.team2.name }}
+                </a></b>
+                {% if match.score2 %}({{ match.score2 }}){% endif %}   
+        </div>
+        
         <div>Date: {{ match.date }}</div>
         <div>Hour: {{ match.hour }}</div>
         <div>Place: {{ match.place }}</div>
@@ -170,8 +186,18 @@
     <h2><b>Round 4</b></h2>
     {% for match in match_col4 %}
     <div class="match">
-        <div>{{ match.team1.name }} {% if match.score1 %}({{ match.score1 }}){% endif %}</div>
-        <div>{{ match.team2.name }} {% if match.score2 %}({{ match.score2 }}){% endif %}</div>
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% if match.score2 %}({{ match.score1 }}){% endif %}
+        
         <div>Date: {{ match.date }} </div>
         <div>Hour: {{ match.hour }} </div>
         <div>Place: {{ match.place }} </div>
@@ -195,5 +221,88 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Round 5 -->
+<div class="round">
+    <h2><b>Round 5</b></h2>
+    {% for match in match_col5 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% if match.score2 %}({{ match.score1 }}){% endif %}
+        
+        <div>Date: {{ match.date }} </div>
+        <div>Hour: {{ match.hour }} </div>
+        <div>Place: {{ match.place }} </div>
+
+        {% if user.is_authenticated and user.is_superuser %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">Score de l'équipe 1 :</label>
+                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">Score de l'équipe 2 :</label>
+                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Round 6 -->
+<div class="round">
+    <h2><b>Round 6</b></h2>
+    {% for match in match_col6 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% if match.score2 %}({{ match.score1 }}){% endif %}
+        
+        <div>Date: {{ match.date }} </div>
+        <div>Hour: {{ match.hour }} </div>
+        <div>Place: {{ match.place }} </div>
+
+        {% if user.is_authenticated and user.is_superuser %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">Score de l'équipe 1 :</label>
+                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">Score de l'équipe 2 :</label>
+                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
 </div>
 {%endblock%}
