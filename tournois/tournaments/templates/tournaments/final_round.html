@@ -70,13 +70,17 @@
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team1.name }}
                 </a></b>
-                {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+                {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
             </div>
             <div>
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team2.name }}
                 </a></b>
-                {% if match.score2 %}({{ match.score2 }}){% endif %}
+                {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }})  //  {% endif %}
+            {% endwith %}
             </div>
             <div>Date: {{ match.date }}</div>
             <div>Hour: {{ match.hour }}</div>
@@ -112,10 +116,15 @@
         <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
             {{ match.team1.name }}
         </a></b>
-        {% if match.score1 %}({{ match.score1 }})   //   {% endif %}
+        {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
         <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
             {{ match.team2.name }}
-        </a></b> {% if match.score2 %}({{ match.score2 }}){% endif %}
+        </a></b> {% with score2=match.score2 %}
+        {% if score2 != None %}({{ score2 }}){% endif %}
+        {% endwith %}
+
     </div>
         <div>Date: {{ match.date }}</div>
         <div>Hour: {{ match.hour }}</div>
@@ -150,11 +159,15 @@
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team1.name }}
             </a></b>
-            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team2.name }}
                 </a></b>
-                {% if match.score2 %}({{ match.score2 }}){% endif %}   
+                {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}  
         </div>
         
         <div>Date: {{ match.date }}</div>
@@ -190,13 +203,17 @@
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team1.name }}
             </a></b>
-            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
         </div>
         
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team2.name }}
             </a></b>
-            {% if match.score2 %}({{ match.score1 }}){% endif %}
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}
         
         <div>Date: {{ match.date }} </div>
         <div>Hour: {{ match.hour }} </div>
@@ -231,13 +248,17 @@
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team1.name }}
             </a></b>
-            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
         </div>
         
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team2.name }}
             </a></b>
-            {% if match.score2 %}({{ match.score1 }}){% endif %}
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}
         
         <div>Date: {{ match.date }} </div>
         <div>Hour: {{ match.hour }} </div>
@@ -272,13 +293,17 @@
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team1.name }}
             </a></b>
-            {% if match.score1 %}({{ match.score1 }})  //  {% endif %}
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
         </div>
         
             <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                 {{ match.team2.name }}
             </a></b>
-            {% if match.score2 %}({{ match.score1 }}){% endif %}
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }})  //  {% endif %}
+            {% endwith %}
         
         <div>Date: {{ match.date }} </div>
         <div>Hour: {{ match.hour }} </div>
