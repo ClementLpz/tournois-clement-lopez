@@ -72,7 +72,6 @@
   
 {% endif %}
 
-
 <div class="tournament-container">
     <!-- Round 1 -->
     <div class="round">
@@ -105,12 +104,12 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="team1_score">Score de l'équipe 1 :</label>
-                    <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                    <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                         class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="team2_score">Score de l'équipe 2 :</label>
-                    <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                    <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                         class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit Scores</button>
@@ -150,12 +149,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="team1_score">Score de l'équipe 1 :</label>
-                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="team2_score">Score de l'équipe 2 :</label>
-                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Scores</button>
@@ -196,12 +195,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="team1_score">Score de l'équipe 1 :</label>
-                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="team2_score">Score de l'équipe 2 :</label>
-                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Scores</button>
@@ -243,12 +242,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="team1_score">Score de l'équipe 1 :</label>
-                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="team2_score">Score de l'équipe 2 :</label>
-                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Scores</button>
@@ -291,12 +290,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="team1_score">Score de l'équipe 1 :</label>
-                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="team2_score">Score de l'équipe 2 :</label>
-                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Scores</button>
@@ -339,12 +338,12 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="team1_score">Score de l'équipe 1 :</label>
-                <input type="number" name="team1_score-{{ match.id }}" id="team1_score-{{ match.id }}"
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="team2_score">Score de l'équipe 2 :</label>
-                <input type="number" name="team2_score-{{ match.id }}" id="team2_score-{{ match.id }}"
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
                     class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Scores</button>
