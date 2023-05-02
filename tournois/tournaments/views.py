@@ -6,6 +6,7 @@ from math import log2
 from django.contrib import messages
 from .models import Tournament, Pool, Match, Comment, FinalRound
 from .forms import CommentForm
+from django.db.models import Q
 
 def user_authentication(request, context):
 
@@ -190,6 +191,7 @@ def final_round(request, tournament_id):
         return redirect('tournaments:pool_details')
     
     else: 
+        print("entering else")
         if erase:
             print("erase")
             FinalRound.objects.filter(tournament=tournament).delete()
@@ -214,6 +216,7 @@ def final_round(request, tournament_id):
             final_round.refresh_from_db()
 
         print(list(final_round.matches.all()))
+        
         next_round_matches = final_round.get_next_round_matches()
         
         matches = list(final_round.matches.all())
@@ -246,6 +249,24 @@ def final_round(request, tournament_id):
             elif TOTAL_MATCHES<=idx <(TOTAL_MATCHES*1.96875):
                 match_col6.append(match)
                 
+        unplayed_matches1 = [match for match in match_col1 if match.score1 == 0 and match.score2 == 0]
+        can_enter_column2_scores = len(unplayed_matches1) == 0 
+        
+        unplayed_matches2 = [match for match in match_col2 if match.score1 == 0 and match.score2 == 0]
+        can_enter_column3_scores = len(unplayed_matches2) == 0 
+        
+        unplayed_matches3 = [match for match in match_col3 if match.score1 == 0 and match.score2 == 0]
+        can_enter_column4_scores = len(unplayed_matches3) == 0 
+        
+        unplayed_matches4 = [match for match in match_col4 if match.score1 == 0 and match.score2 == 0]
+        can_enter_column5_scores = len(unplayed_matches4) == 0 
+        
+        unplayed_matches5 = [match for match in match_col5 if match.score1 == 0 and match.score2 == 0]
+        can_enter_column6_scores = len(unplayed_matches5) == 0 
+        
+        
+
+                      
         context = {
             'final_round': final_round,
             'match_col1': match_col1,
@@ -256,6 +277,11 @@ def final_round(request, tournament_id):
             'match_col6' :match_col6,
             'tournament_id': tournament_id,
             'next_round_matches': final_round.get_next_round_matches(),
+            'can_enter_column2_scores': can_enter_column2_scores,
+            'can_enter_column3_scores': can_enter_column3_scores,
+            'can_enter_column4_scores': can_enter_column4_scores,
+            'can_enter_column5_scores': can_enter_column5_scores,
+            'can_enter_column6_scores': can_enter_column6_scores,
             'log2': log2,
             'range': range
         }

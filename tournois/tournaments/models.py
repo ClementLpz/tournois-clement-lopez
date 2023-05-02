@@ -134,7 +134,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
-    round = models.IntegerField(null=True)  
+    round = models.IntegerField(null=True) 
     
     class Meta:
         unique_together = (('team1', 'team2', 'round'),)
@@ -236,6 +236,8 @@ class FinalRound(models.Model):
                     if next_round_match:
                         next_round_matches.append(next_round_match)
         return next_round_matches
+    
+
     
     def generate_next_round(self):
         print("generate next round called")
