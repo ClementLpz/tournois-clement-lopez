@@ -237,8 +237,6 @@ class FinalRound(models.Model):
                         next_round_matches.append(next_round_match)
         return next_round_matches
     
-
-    
     def generate_next_round(self):
         print("generate next round called")
         matches = self.matches.all()
