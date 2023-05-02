@@ -1,0 +1,95 @@
+{%load static%}
+  
+  <!-- Add a canvas element for the scatter plot -->
+  <canvas id="scatter-plot"></canvas>
+  <p>'Test '</p>
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
+
+
+
+
+  <script>
+    // Get data for the scatter plot
+    const data = {
+      datasets: [{
+        label: 'Goals Marqués vs. Goals Concédés',
+        data: [
+          {% for team in teams_ranked %}
+            {
+              y: {{ team.scored }},
+              x: {{ team.conceded }},
+              label: '{{ team.name }}'
+            },
+          {% endfor %}
+        ],
+        backgroundColor: '#24285B',
+        pointBackgroundColor: '#24285B',
+      }]
+    };
+    
+    // Set options for the scatter plot
+    const options = {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Goals Scored vs. Goals Conceded',
+      },
+      scales: {
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Goals Scored'
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+          }
+        }],
+        xAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Goals Conceded'
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+            label: function(tooltipItem, data) {
+                var teamLabel = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].label;
+                var xLabel = tooltipItem.xLabel;
+                var yLabel = tooltipItem.yLabel;
+                return teamLabel + ': (' + yLabel + ', ' + xLabel + ')';
+              }
+        }
+      },
+      elements: {
+        point: {
+            radius: 8,
+            hoverRadius: 20,
+            hoverBackgroundColor: '#FFD200',
+            hoverBorderColor: '#24285B',
+            hoverBorderWidth: 4,
+        }
+    },
+    hover: {
+        mode: 'nearest'
+      },
+      animation: {
+        duration: 2500,
+        easing: 'easeInOutQuart',
+      }
+};
+    
+    // Create the scatter plot
+    const scatterPlot = new Chart(document.getElementById('scatter-plot'), {
+      type: 'scatter',
+      data: data,
+      options: options
+    });
+  </script>

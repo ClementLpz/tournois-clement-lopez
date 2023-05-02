@@ -22,5 +22,7 @@ urlpatterns = [
 
     # ex: /tournaments/match/5/11
     path('match/<int:match_id>/<int:comment_id>/', views.update_comment, name='update_comment'),
+    
+    path('pool/<int:pool_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
 
 ]
