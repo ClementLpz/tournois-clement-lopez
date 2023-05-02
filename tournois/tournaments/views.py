@@ -102,6 +102,25 @@ def match_details(request, match_id):
     
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
 
+
+def match_details_finals(request, match_id):
+    match = get_object_or_404(Match, pk=match_id)
+    context = {'match' : match}
+
+    if request.method == 'GET':
+        form = CommentForm()
+    elif request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = Comment(message = form.cleaned_data['message'], 
+                              match = match, 
+                              pub_date = timezone.now(), 
+                              author = request.user)
+            comment.save()                  
+            context['form'] = form
+    
+    return render(request,'tournaments/match_details_finals.html', user_authentication(request, context))
+    
 def update_comment(request, match_id, comment_id):
 
     """
@@ -126,6 +145,31 @@ def update_comment(request, match_id, comment_id):
     
     context['form'] = form
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
+
+def update_comment_finals(request, match_id, comment_id):
+
+    """
+    Allow an authenticated user to MODIFY a comment he posted.
+    :param request: The incoming request
+    :param match_id: The id of the selected match
+    :param comment_id: The id of the comment to modify
+    """
+
+    match = get_object_or_404(Match, pk=match_id)
+    context = {'match' : match}
+
+    comment = get_object_or_404(Comment, pk=comment_id)
+    comment.pub_date = timezone.now()
+    if request.method == 'GET':
+        form = CommentForm(instance=comment)
+    elif request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('tournaments:match_details_finals', match_id)
+    
+    context['form'] = form
+    return render(request, 'tournaments/match_details_finals.html', user_authentication(request, context))
 
 
 def final_round(request, tournament_id, force=False, erase=False):
