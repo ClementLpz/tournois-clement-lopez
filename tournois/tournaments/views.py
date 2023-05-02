@@ -190,6 +190,8 @@ def final_round(request, tournament_id, force=False, erase=False):
         'final_round': final_round,
         'match_col1': match_col1,
         'match_col2': match_col2,
+        'match_col3' : match_col3,
+        'match_col4' : match_col4,
         'next_round_matches': final_round.get_next_round_matches(),
         'log2': log2,
         'range': range
