@@ -245,7 +245,7 @@ def final_round(request, tournament_id):
         match_col5=[]
         match_col6=[]
         
-        #1+1/2+1/4+1/8+1/16...
+        #1+1/2+1/4+1/8+1/16 : at each round, you can add half the previous value
         for idx, match in enumerate(final_round.matches.all()):
             if idx < TOTAL_MATCHES:
                 match_col1.append(match)
@@ -278,10 +278,7 @@ def final_round(request, tournament_id):
         
         unplayed_matches5 = [match for match in match_col5 if match.score1 == 0 and match.score2 == 0]
         can_enter_column6_scores = len(unplayed_matches5) == 0 
-        
-        
-
-                      
+                            
         context = {
             'final_round': final_round,
             'match_col1': match_col1,
