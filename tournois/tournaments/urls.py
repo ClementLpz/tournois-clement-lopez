@@ -19,8 +19,20 @@ urlpatterns = [
 
     # ex: /tournaments/match/5
     path('match/<int:match_id>/', views.match_details, name='match_details'),
+    
+    # ex: /tournaments/match_finals/5
+    path('match_finals/<int:match_id>/', views.match_details_finals, name='match_details_finals'),
 
     # ex: /tournaments/match/5/11
     path('match/<int:match_id>/<int:comment_id>/', views.update_comment, name='update_comment'),
+        
+    # ex: /tournaments/match_finals/5/11
+    path('match_finals/<int:match_id>/<int:comment_id>/', views.update_comment_finals, name='update_comment_finals'),
+    
+    #ex : /tournaments/1/final_round
+    path('<int:tournament_id>/final_round/', views.final_round, name='final_round'),
+    
+    #ex : /tournaments/pool/1/scatter_plot
+    path('pool/<int:pool_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
 
 ]

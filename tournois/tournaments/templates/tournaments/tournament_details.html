@@ -45,6 +45,12 @@ Extend site-wide base HTML template located in main templates/ dir
     <h2>{{ tournament.name }} <br/> <small>in {{ tournament.place }}, {{ tournament.date }}</small></h2>
 </div>
 
+
+<form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger"><b>Access Final Rounds</b></button>
+  </form>
+
 <div class="row">
     {% if tournament.pool_set.all %}
         <table class="table table-striped">
