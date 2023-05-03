@@ -87,13 +87,18 @@ class Pool(models.Model):
     """
 
     def compute_ranking(self):
+        
         teams = self.teams.all()
         computed_pool_points = {}
         ranked_computed_teams = []
 
         for team in teams :
 
-            for match in Match.objects.all() :
+            for match in Match.objects.filter(pool=self) :
+                match.team1.scored=0
+                match.team1.conceded=0
+                match.team2.scored=0
+                match.team2.conceded=0
 
                 if match.team1 == team :
                     team.scored += match.score1
@@ -287,6 +292,3 @@ class FinalRound(models.Model):
                 return self.matches.all()
             else:
                 winner1, winner2 = None, None
-
-            
-            
