@@ -135,10 +135,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
-    round = models.IntegerField(null=True) 
     
-    # class Meta:
-    #     unique_together = (('team1', 'team2', 'round'),)
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
@@ -150,7 +147,8 @@ class Match(models.Model):
             return self.team2
         else:
             return None
-        
+    
+    #For future improvements     
     def clean(self):
         super().clean()
         if self.score1 == self.score2:
@@ -176,59 +174,77 @@ class FinalRound(models.Model):
     """
     A final round, with one tournament, and several matches
     """
+
     tournament = models.OneToOneField(Tournament, on_delete=models.CASCADE)
-    matches = models.ManyToManyField(Match)
-    rounds = models.IntegerField(default=1)  
+    matches = models.ManyToManyField(Match)  # Many-to-many relationship with Match
+    rounds = models.IntegerField(default=1)  # Number of rounds completed so far
 
     class Meta:
-        db_table = "tournaments_finalround"
+        db_table = "tournaments_finalround"  # Name of the database table
 
     def __str__(self):
-        return "Final Round for: " + str(self.tournament)
+        return "Final Round for: " + str(self.tournament)  # String representation of the instance
 
+    # Create pairings based on the pool ranking. The 1st of a pool must fight the 2nd of another random pool.
     def create_pairings(self):
         print("create_pairing called")
-        pool_list = list(self.tournament.pool_set.all())
-        first_teams = []
-        second_teams = []
+        pool_list = list(self.tournament.pool_set.all())  # Get all the pools for the tournament
+        first_teams = []  # List of 1st ranked teams for each pool
+        second_teams = []  # List of 2nd ranked teams for each pool
 
         for pool in pool_list:
-            ranked_teams = pool.compute_ranking()
-            first_teams.append(ranked_teams[0])
-            second_teams.append(ranked_teams[1])
+            ranked_teams = pool.compute_ranking()  # Compute the ranking of teams for the pool
+            first_teams.append(ranked_teams[0])  # Add the 1st ranked team to the first_teams list
+            second_teams.append(ranked_teams[1])  # Add the 2nd ranked team to the second_teams list
 
-        random.shuffle(second_teams)
+        random.shuffle(second_teams)  # Shuffle the list of 2nd ranked teams
 
         for i in range(len(first_teams)):
-            match = Match(team1=first_teams[i], team2=second_teams[i], pool=None, date=self.tournament.date, hour="10h - 12h", place=self.tournament.place)
-            match.save()
-            self.matches.add(match)
-            print(f"Match créé : {match.team1.name} vs {match.team2.name}")  # Ajoutez cette ligne pour le débogage
+            match = Match(
+                team1=first_teams[i],
+                team2=second_teams[i],
+                pool=None,
+                date=self.tournament.date,
+                hour="10h - 12h",
+                place=self.tournament.place,
+            )
+            match.save()  # Save the match to the database
+            self.matches.add(match)  # Add the match to the matches many-to-many field
+            # print(f"Match créé : {match.team1.name} vs {match.team2.name}")  --Debug
+
+        self.save()  # Save the instance to the database
+ 
         
-        self.save()  # Enregistrez les modifications
-        
+    #Useful for the template (since you can have 4, 8, 16, 32 teams)
     def get_total_matches(self):
         print("total matches called")
         pool_list = list(self.tournament.pool_set.all())
         return len(pool_list)
     
+    #Helping create the next round match in finalround based on a list of winners from previous rounds
     @staticmethod
     def get_winners_from_previous_round(matches):
         winners = []
-        print(f"Total matches: {len(matches)}")  # Ajouter cette ligne
+        # Print total number of matches
+        print(f"Total matches: {len(matches)}") 
         for match in matches:
-            print(f"Checking winner for match {match.id}: {match.team1.name} ({match.score1}) vs {match.team2.name} ({match.score2})")  # Corriger cette ligne
+            # Print info for each match
+            print(f"Checking winner for match {match.id}: {match.team1.name} ({match.score1}) vs {match.team2.name} ({match.score2})")
             winner = match.winner()
             if winner is not None:
                 winners.append(winner)
-                print(f"Winner found: {winner.name}")  # Ajouter cette ligne
+                # Print info for winner found
+                print(f"Winner found: {winner.name}")
             else:
+                # Print info for no winner found
                 print(f"No winner found for match {match.id}")
+        # Print list of winners found
         print(f"Winners found: {winners}")
         return winners
-        
+
     def get_next_round_matches(self):
         next_round_matches = []
+        # Get list of completed matches
         completed_matches = [m for m in self.matches.all() if m.winner() is not None]
         if len(completed_matches) == self.matches.count():
             used_teams = []
@@ -236,16 +252,18 @@ class FinalRound(models.Model):
                 winner = match.winner()
                 if winner and winner not in used_teams:
                     used_teams.append(winner)
+                    # Get next round match for winner
                     next_round_match = Match.objects.filter(finalround=self, team1=winner).first()
                     if next_round_match is None:
                         next_round_match = Match.objects.filter(finalround=self, team2=winner).first()
                     if next_round_match:
                         next_round_matches.append(next_round_match)
         return next_round_matches
-    
+
     def generate_next_round(self):
         print("generate next round called")
         matches = self.matches.all()
+        # Get list of winners from previous round
         winners = FinalRound.get_winners_from_previous_round(matches)
         print(f"winner = {winners}")
         print(f"matches ={matches}")
@@ -253,12 +271,13 @@ class FinalRound(models.Model):
         if len(winners) % 2 != 0:
             print("Erreur : la liste des vainqueurs doit être de longueur paire.")
             return
-        
+            
         else : 
-            # Augmenter le nombre de rounds et sauvegarder
+            # Increase number of rounds and save
             self.rounds += 1
             self.save()
             if len(winners) >= 2:
+                # Get the last two winners and create a match
                 winner1, winner2 = winners[-2], winners[-1]
                 match = Match(team1=winner1, team2=winner2, pool=None, date=self.tournament.date,
                         hour="10h - 12h", place=self.tournament.place, round=self.rounds)
@@ -267,5 +286,6 @@ class FinalRound(models.Model):
                 return self.matches.all()
             else:
                 winner1, winner2 = None, None
+
             
             

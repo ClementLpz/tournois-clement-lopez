@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 {% load mathfilters custom_filters %}
 {%load static%}
-
-<head>
-    <link rel="stylesheet" type="text/css" href="{% static 'tournaments/style.css' %}">
-    </head>
 {% block content %}
 
+<!-- including style.css -->
+<link rel="stylesheet" type="text/css" href="{% static 'tournament/style.css' %}">
 
+<!-- Classic menu  -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
         {% if username %}
@@ -35,237 +34,78 @@
         </ul>
     </div>
 </nav>
-<style>
-    /* Font */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* Colors */
-:root {
-  --primary: #006699;
-  --secondary: #E6E6E6;
-  --tertiary: #f9f9f9;
-  --text-color: #333333;
-}
-
-/* Reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-input[type="submit"] {
-    margin-top: 20px;
-  }
-
-/* Body */
-body {
-  font-family: 'Roboto', sans-serif;
-  color: var(--text-color);
-  background-color: var(--tertiary);
-}
-
-/* Navbar */
-.navbar {
-  background-color: var(--primary);
-  padding: 10px 20px;
-}
-
-.navbar-brand {
-  font-size: 1.5rem;
-}
-
-.nav-link {
-  font-size: 1.2rem;
-}
-
-.navbar-nav {
-  margin-left: auto;
-}
-
-.btn {
-  font-size: 1.2rem;
-}
-
-/* Main Heading */
-h1 {
-  font-size: 2.5rem;
-  margin: 20px 0;
-}
-
-.round h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
-
-
-.match a {
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-.match p {
-  margin-bottom: 10px;
-}
-
-.match label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 5px;
-}
-
-.match input {
-  border-radius: 5px;
-  border: 1px solid var(--text-color);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  padding: 10px;
-  width: 100%;
-}
-
-.match button {
-  background-color: var(--primary);
-  border: none;
-  border-radius: 5px;
-  color: white;
-  font-size: 1.2rem;
-  padding: 10px 20px;
-}
-
-.match button:hover {
-  background-color: #005580;
-}
-
-/* Form */
-.form-group {
-  text-align: left;
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  margin: 30px 0;
-  padding: 0;
-}
-
-.page-item {
-  margin: 0 10px;
-}
-
-.page-link {
-  background-color: var(--secondary);
-  border: 1px solid var(--text-color);
-  border-radius: 5px;
-  color: var(--text-color);
-  font-size: 1.2rem;
-  padding: 10px;
-}
-
-.page-link:hover {
-  background-color: var(--primary);
-  color: white;
-}
-
-.page-item.active .page-link {
-  background-color: var(--primary);
-  border-color: var(--primary);
-  color: white;
-}
-.tournament-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.round {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin: 0 20px;
-}
-
-.match {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px;
-    width: 150px;
-    text-align: center;
-}
-
-.navbar a.nav-link:hover {
-    background-color: grey;
-}
-</style>
 
 <h1>Final Round - {{ final_round.tournament.name }}</h1>
 
-
-
 <p>Total matches: {{ final_round.matches.all|length }}</p>
-
 <!-- Reset pairings -->
+
 {% if user.is_authenticated and user.is_superuser %}
 <p>Note : this is a final round tournament, so the score cannot be even. If a team wins due to penalty shootout, you should enter this score instead.</p>
+<!-- Reset pairings button form -->
 <form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
     <input type="hidden" name="reset_pairings" value="true">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Reset pairings</button>
   </form>
-  
-{% endif %}
 
+{% endif %}
+<!-- Tournament container -->
 <div class="tournament-container">
     <!-- Round 1 -->
     <div class="round">
         <h2><b>Round 1</b></h2>
         {% for match in match_col1 %}
         <div class="match">
+            <!-- Team 1 -->
             <div>
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team1.name }}
                 </a></b>
                 {% with score1=match.score1 %}
-            {% if score1 != None %}({{ score1 }})  //  {% endif %}
-            {% endwith %}
+                <!-- Display Team 1 score -->
+                {% if score1 != None %}({{ score1 }})  //  {% endif %}
+                {% endwith %}
             </div>
+            <!-- Team 2 -->
             <div>
                 <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
                     {{ match.team2.name }}
                 </a></b>
                 {% with score2=match.score2 %}
-            {% if score2 != None %}({{ score2 }}){% endif %}
-            {% endwith %}
+                <!-- Display Team 2 score -->
+                {% if score2 != None %}({{ score2 }}){% endif %}
+                {% endwith %}
             </div>
+            <!-- Match details -->
             <div>{{ match.date }}</div>
             <div>{{ match.hour }}</div>
             <div>{{ match.place }}</div>
 
-            
-            {% if user.is_authenticated and user.is_superuser and not can_enter_column2_scores%}
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="team1_score">{{match.team1.name}} :</label>
-                    <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
-                        class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="team2_score">{{match.team2.name}} :</label>
-                    <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
-                        class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Scores</button>
-            </form>
-            {% endif %}
-        </div>
-        {% endfor %}
+        {% if user.is_authenticated and user.is_superuser and not can_enter_column2_scores%}
+        <!-- Enter score form -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}} :</label>
+                <!-- Enter Team 1 score -->
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <!-- Enter Team 2 score -->
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <!-- Submit scores button -->
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
     </div>
+    {% endfor %}
+</div>
+
 
 {% if match_col2%}
 <!-- Round 2 -->

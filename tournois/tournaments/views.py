@@ -103,7 +103,7 @@ def match_details(request, match_id):
     
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
 
-
+#Almost like match_details but another render since it's a finalround match and that created problems with the Ariane wire
 def match_details_finals(request, match_id):
     match = get_object_or_404(Match, pk=match_id)
     context = {'match' : match}
@@ -147,6 +147,7 @@ def update_comment(request, match_id, comment_id):
     context['form'] = form
     return render(request, 'tournaments/match_details.html', user_authentication(request, context))
 
+#Almost like update_comments but another render since it's a finalround match and that created problems with the Ariane wire
 def update_comment_finals(request, match_id, comment_id):
 
     """
@@ -176,32 +177,47 @@ def update_comment_finals(request, match_id, comment_id):
 def final_round(request, tournament_id):
     force = False
     erase = False
+
+    # Check if the "reset_pairings" button was clicked
     if request.method == "POST" and "reset_pairings" in request.POST:
         force = True
         erase = True
-        
-    print("début")
+
+    # Get the tournament object
     tournament = get_object_or_404(Tournament, pk=tournament_id)
+
+    # Get the final round for this tournament, creating a new one if necessary
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
-    TOTAL_MATCHES= final_round.get_total_matches()
-    print (TOTAL_MATCHES)
-    
-    if (not math.log2(TOTAL_MATCHES).is_integer()) or (TOTAL_MATCHES>32):
+
+    # Get the total number of matches in the final round
+    TOTAL_MATCHES = final_round.get_total_matches()
+    print(TOTAL_MATCHES)
+
+    # Check if the number of matches is valid (a power of 2 and no more than 32)
+    if (not math.log2(TOTAL_MATCHES).is_integer()) or (TOTAL_MATCHES > 32):
         messages.error(request, "The total number of matches must be a power of 2 and inferior to 32.")
         return redirect('tournaments:pool_details')
-    
-    else: 
+
+    else:
         print("entering else")
+
+        # If "reset_pairings" was clicked, erase all matches from the final round
         if erase:
             print("erase")
+            matches = final_round.matches.all()
+            for match in matches:
+                match.delete()
+            final_round.matches.clear()
             FinalRound.objects.filter(tournament=tournament).delete()
-        
+
+        # If this is a new final round or "force" is True, create new pairings for the final round
         if created or force:
             print("créé")
             final_round = FinalRound.objects.create(tournament=tournament)
             final_round.create_pairings()
             final_round.refresh_from_db()
 
+        # If the user is authenticated and a superuser, update the scores for each match
         if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
             for match in final_round.matches.all():
                 match_id = str(match.id)
@@ -215,15 +231,13 @@ def final_round(request, tournament_id):
             final_round.generate_next_round()
             final_round.refresh_from_db()
 
+        # Get the list of matches for the final round and the next round, if any
         print(list(final_round.matches.all()))
-        
         next_round_matches = final_round.get_next_round_matches()
-        
         matches = list(final_round.matches.all())
-        
-        # Stocker le nombre total de matches dans une constante
 
-        # Créer des arraylists pour les différentes colonnes
+        
+        # Creating arraylists for columns in template
         match_col1 = []
         match_col2 = []
         match_col3 =[]
@@ -231,6 +245,7 @@ def final_round(request, tournament_id):
         match_col5=[]
         match_col6=[]
         
+        #1+1/2+1/4+1/8+1/16...
         for idx, match in enumerate(final_round.matches.all()):
             if idx < TOTAL_MATCHES:
                 match_col1.append(match)
@@ -277,6 +292,7 @@ def final_round(request, tournament_id):
             'match_col6' :match_col6,
             'tournament_id': tournament_id,
             'next_round_matches': final_round.get_next_round_matches(),
+            #Enables dynamic display of modification options for the superuser
             'can_enter_column2_scores': can_enter_column2_scores,
             'can_enter_column3_scores': can_enter_column3_scores,
             'can_enter_column4_scores': can_enter_column4_scores,

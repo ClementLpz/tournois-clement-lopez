@@ -46,7 +46,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 <form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Accéder aux phases finales</button>
+    <button type="submit" class="btn btn-danger"><b>Access Final Rounds</b></button>
   </form>
 
 <div class="row">
