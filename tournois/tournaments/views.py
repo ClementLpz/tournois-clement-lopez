@@ -131,5 +131,13 @@ def scatter_plot(request, pool_id):
     teams = pool.teams.all()
     data = [(team.scored, team.conceded) for team in teams]
     teams_ranked = Pool.compute_ranking(pool)
-    context = {'teams_ranked' : teams_ranked, 'pool': pool} # Add tournament to the context
+    context = {'teams_ranked' : teams_ranked, 'pool': pool} 
     return render(request, 'tournaments/scatter_plot.html', context)
+
+def goals_per_team_plot(request, pool_id):
+    pool = Pool.objects.get(id=pool_id)
+    teams =  pool.teams.all()
+    data = [(team.scored, team.conceded) for team in teams]
+    teams_ranked = Pool.compute_ranking(pool)
+    context = {'teams_ranked' : teams_ranked, 'pool': pool}
+    return render(request, 'tournaments/goals_per_team_plot.html', context)
