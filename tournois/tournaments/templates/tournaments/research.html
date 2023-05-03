@@ -53,12 +53,29 @@ Extend site-wide base HTML template located in main templates/ dir
 {% if not research|stringformat:"s" == "" %}
 
     <div class="row pb-3">
-        <h1>Results for research : {{ research }}</h1>
+        <h1>Results for research :
+        {% for key_word in research %}
+            {{ key_word }}
+        {% endfor %}
+        </h1> 
     </div>
 
     <table class="table table-striped">
 
         <tbody>
+
+            {% if tournaments %}
+                <tr>
+                    <th><h5>Tournaments by name : </h5></th>
+                    <td>
+                        <ul>
+                            {% for tournament in tournaments %}
+                                <li><a href="{% url 'tournaments:tournament_details' tournament.id %}"><b>{{ tournament.name }}</b></a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endif %}
 
             {% if teams %}
                 <tr>
@@ -66,7 +83,7 @@ Extend site-wide base HTML template located in main templates/ dir
                     <td>
                         <ul>
                             {% for team in teams %}
-                                <li>{{ team.name }}</li> <br>
+                                <li>{{ team.name }}</li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -81,6 +98,8 @@ Extend site-wide base HTML template located in main templates/ dir
 
                             <thead>
                             <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
                                 <th>Match</th>
                                 <th>Date</th>
                                 <th>Score</th>
@@ -90,9 +109,11 @@ Extend site-wide base HTML template located in main templates/ dir
                             <tbody>
                                 {% for match in matchs_team %}
                                     <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
                                         <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
                                         <td>{{ match.date }}</td>
-                                        <td>{{ match.score1 }} | {{ match.score2 }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -110,6 +131,8 @@ Extend site-wide base HTML template located in main templates/ dir
 
                             <thead>
                             <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
                                 <th>Match</th>
                                 <th>Date</th>
                                 <th>Score</th>
@@ -119,9 +142,11 @@ Extend site-wide base HTML template located in main templates/ dir
                             <tbody>
                                 {% for match in matchs_date %}
                                     <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
                                         <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
                                         <td>{{ match.date }}</td>
-                                        <td>{{ match.score1 }} | {{ match.score2 }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -131,7 +156,7 @@ Extend site-wide base HTML template located in main templates/ dir
                 </tr>
             {% endif %}
 
-            {% if matchs_goals %}
+            {% if matchs_scores %}
                 <tr>
                     <th><h5>Match by score : </h5></th>
                     <td>
@@ -139,6 +164,8 @@ Extend site-wide base HTML template located in main templates/ dir
 
                             <thead>
                             <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
                                 <th>Match</th>
                                 <th>Date</th>
                                 <th>Score</th>
@@ -146,11 +173,145 @@ Extend site-wide base HTML template located in main templates/ dir
                             </thead>
             
                             <tbody>
-                                {% for match in matchs_goals %}
+                                {% for match in matchs_scores %}
                                     <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
                                         <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
                                         <td>{{ match.date }}</td>
-                                        <td>{{ match.score1 }} | {{ match.score2 }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                    
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if matchs_goal %}
+                <tr>
+                    <th><h5>Match by goal : </h5></th>
+                    <td>
+                        <table class="table table-striped">
+
+                            <thead>
+                            <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
+                                <th>Match</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+            
+                            <tbody>
+                                {% for match in matchs_goal %}
+                                    <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
+                                        <td>{{ match.date }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                    
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if matchs_pool %}
+                <tr>
+                    <th><h5>Match by pool number : </h5></th>
+                    <td>
+                        <table class="table table-striped">
+
+                            <thead>
+                            <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
+                                <th>Match</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+            
+                            <tbody>
+                                {% for match in matchs_pool %}
+                                    <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
+                                        <td>{{ match.date }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                    
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if matchs_tournament %}
+                <tr>
+                    <th><h5>Match by tournament name : </h5></th>
+                    <td>
+                        <table class="table table-striped">
+
+                            <thead>
+                            <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
+                                <th>Match</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+            
+                            <tbody>
+                                {% for match in matchs_tournament %}
+                                    <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
+                                        <td>{{ match.date }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                    
+                        </table>
+                    </td>
+                </tr>
+            {% endif %}
+
+            {% if multi_search %}
+                <tr>
+                    <th><h5>Match with multi searching : </h5></th>
+                    <td>
+                        <table class="table table-striped">
+
+                            <thead>
+                            <tr>
+                                <th>Tournament</th>
+                                <th>Pool</th>
+                                <th>Match</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+            
+                            <tbody>
+                                {% for match in multi_search %}
+                                    <tr>
+                                        <td><a href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}"><b>{{ match.pool.tournament.name }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:pool_details' match.pool.id %}"><b>Pool n°{{ match.pool.number }}</b></a></td>
+                                        <td><a href="{% url 'tournaments:match_details' match.id %}"><b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b></a></td>
+                                        <td>{{ match.date }}</td>
+                                        <td>{{ match.score1 }}-{{ match.score2 }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

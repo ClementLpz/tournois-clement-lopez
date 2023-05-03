@@ -12,7 +12,7 @@ class Tournament(models.Model):
 
     name = models.CharField(max_length=200)
     place = models.CharField(max_length=200, null=True)
-    date = models.CharField(max_length=200, null=True)
+    date = models.DateField('Date of the tournament', null = True)
     N_pools = models.IntegerField('Number of pools')
     N_teams_per_pools = models.IntegerField('Number of teams per pools')
 
@@ -124,7 +124,7 @@ class Match(models.Model):
     A match, several by pools, involving two teams
     """
 
-    date = models.CharField(max_length=200)
+    date = models.DateField('Date of the tournament', null = True)
     hour = models.CharField(max_length=200)
     place = models.CharField(max_length=200)
     team1 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team1_set')
