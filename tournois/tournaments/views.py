@@ -302,3 +302,11 @@ def final_round(request, tournament_id):
             'range': range
         }
         return render(request, 'tournaments/final_round.html', user_authentication(request, context))
+
+def scatter_plot(request, pool_id):
+    pool = Pool.objects.get(id=pool_id)
+    teams = pool.teams.all()
+    data = [(team.scored, team.conceded) for team in teams]
+    teams_ranked = Pool.compute_ranking(pool)
+    context = {'teams_ranked' : teams_ranked, 'pool': pool} # Add tournament to the context
+    return render(request, 'tournaments/scatter_plot.html', context)

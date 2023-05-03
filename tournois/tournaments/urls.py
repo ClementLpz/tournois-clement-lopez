@@ -25,7 +25,7 @@ urlpatterns = [
 
     # ex: /tournaments/match/5/11
     path('match/<int:match_id>/<int:comment_id>/', views.update_comment, name='update_comment'),
-    
+        
     # ex: /tournaments/match_finals/5/11
     path('match_finals/<int:match_id>/<int:comment_id>/', views.update_comment_finals, name='update_comment_finals'),
     
@@ -33,4 +33,6 @@ urlpatterns = [
     path('<int:tournament_id>/final_round/', views.final_round, name='final_round'),
     
     
+    path('pool/<int:pool_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
+
 ]

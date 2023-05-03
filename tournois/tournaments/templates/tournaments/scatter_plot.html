@@ -1,0 +1,126 @@
+{%load static%}
+  
+
+
+<style>
+  body {
+    background-color: F9C51E;
+  }
+</style>
+
+
+  <!-- Add a canvas element for the scatter plot -->
+  <canvas id="scatter-plot" style="height: 75%; width: 75%;"></canvas>
+
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
+
+
+
+
+  <script>
+    // Get data for the scatter plot
+    const data = {
+      datasets: [{
+        label: 'Buts Marqués vs. Buts Concédés',
+        data: [
+          {% for team in teams_ranked %}
+            {
+              y: {{ team.scored }},
+              x: {{ team.conceded }},
+              label: '{{ team.name }}'
+            },
+          {% endfor %}
+        ],
+        backgroundColor: '#DE1E3D',
+        pointBackgroundColor: '#DE1E3D ',
+      }]
+    };
+    
+    // Set options for the scatter plot
+
+    const options = {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Buts Marqués vs. Buts Reçus',
+        fontSize: 20, // add this option to increase title font size
+        fontColor: '#333', // add this option to change title font color
+        fontWeight: 'bold', // add this option to make the title bold
+      },
+      scales: {
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Buts Marqués',
+            fontSize: 16, // add this option to increase y-axis label font size
+            fontColor: '#333', // add this option to change y-axis label font color
+            fontWeight: 'bold', // add this option to make the y-axis label bold
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+            fontSize: 14, // add this option to increase y-axis tick font size
+            fontColor: '#333', // add this option to change y-axis tick font color
+            fontWeight: 'bold', // add this option to make the y-axis tick font bold
+          }
+        }],
+        xAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Buts Reçus',
+            fontSize: 16, // add this option to increase x-axis label font size
+            fontColor: '#333', // add this option to change x-axis label font color
+            fontWeight: 'bold', // add this option to make the x-axis label bold
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+            fontSize: 14, // add this option to increase x-axis tick font size
+            fontColor: '#333', // add this option to change x-axis tick font color
+            fontWeight: 'bold', // add this option to make the x-axis tick font bold
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var teamLabel = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].label;
+            var xLabel = tooltipItem.xLabel;
+            var yLabel = tooltipItem.yLabel;
+            return teamLabel + ': (' + yLabel + ', ' + xLabel + ')';
+          },
+          titleFontSize: 18, // add this option to increase tooltip title font size
+          titleFontColor: '#333', // add this option to change tooltip title font color
+          bodyFontSize: 14, // add this option to increase tooltip body font size
+          bodyFontColor: '#333', // add this option to change tooltip body font color
+          bodyFontWeight: 'bold', // add this option to make the tooltip body font bold
+        }
+      },
+      elements: {
+        point: {
+          radius: 8,
+          hoverRadius: 12,
+          hoverBackgroundColor: '#06125B',
+          hoverBorderColor: '#DE1E3D ',
+          hoverBorderWidth: 8,
+        }
+      },
+      hover: {
+        mode: 'nearest'
+      },
+      animation: {
+        duration: 2500,
+        easing: 'easeInOutQuart',
+      }
+    };
+    
+    
+    // Create the scatter plot
+    const scatterPlot = new Chart(document.getElementById('scatter-plot'), {
+      type: 'scatter',
+      data: data,
+      options: options
+    });
+  </script>
