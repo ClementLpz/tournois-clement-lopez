@@ -181,6 +181,8 @@ def final_round(request, tournament_id):
         erase = True
         
     print("début")
+    
+    
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     final_round, created = FinalRound.objects.get_or_create(tournament=tournament)
     TOTAL_MATCHES= final_round.get_total_matches()
@@ -194,6 +196,10 @@ def final_round(request, tournament_id):
         print("entering else")
         if erase:
             print("erase")
+            matches = final_round.matches.all()
+            for match in matches:
+                match.delete()
+            final_round.matches.clear()
             FinalRound.objects.filter(tournament=tournament).delete()
         
         if created or force:
