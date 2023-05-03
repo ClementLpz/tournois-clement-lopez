@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
-
+import json
 from .models import Tournament, Pool, Match, Comment
 from .forms import CommentForm
 
@@ -128,16 +128,31 @@ def update_comment(request, match_id, comment_id):
 
 def scatter_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
-    teams = pool.teams.all()
-    data = [(team.scored, team.conceded) for team in teams]
     teams_ranked = Pool.compute_ranking(pool)
     context = {'teams_ranked' : teams_ranked, 'pool': pool} 
     return render(request, 'tournaments/scatter_plot.html', context)
 
 def goals_per_team_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
-    teams =  pool.teams.all()
-    data = [(team.scored, team.conceded) for team in teams]
     teams_ranked = Pool.compute_ranking(pool)
     context = {'teams_ranked' : teams_ranked, 'pool': pool}
     return render(request, 'tournaments/goals_per_team_plot.html', context)
+
+from django.http import JsonResponse
+
+def goals_per_match_plot(request, pool_id):
+    pool = Pool.objects.get(id=pool_id)
+    matches = Match.objects.filter(pool__id=pool_id).order_by('id')
+    labels = []
+    data = []
+
+    for match in matches:
+        labels.append(str(match.team1) + ' vs ' + str(match.team2))
+        data.append(match.score1 + match.score2)
+
+    chart = {
+        'labels': labels,
+        'data': data,
+    }
+
+    return render(request, 'tournaments/goals_per_match_plot.html', {'chart_data':json.dumps(chart)})

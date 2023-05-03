@@ -1,0 +1,86 @@
+{% load static %}
+<style>
+    body {
+      background-color: DE1E3D;
+    }
+  </style>
+<!-- Add a canvas element for the bar chart -->
+<canvas id="goals-per-team-plot"></canvas>
+
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+<script>
+
+  const chart = {{chart_data|safe}};
+    // Get data for the bar chart
+  const labels = chart.labels;
+  const totalGoals = chart.data;
+
+
+  const goalData = {
+    labels: labels,
+    datasets: [{
+      label: 'Buts dans le Match',
+      data: totalGoals,
+      backgroundColor: '#F9C51E ',
+      borderColor: '#F9C51E ',
+      borderWidth: 1,
+      
+      
+    }]
+  };
+
+  // Set options for the bar chart
+  const config = {
+    type: 'bar',
+    data: goalData,
+    options: {
+        title: {
+            display: true,
+            text: 'Total de Buts par Match',
+            fontColor: 'black', // set title font color to black
+            fontSize: 20, // set title font size to 20
+            fontWeight: 'bold' // set title font weight to bold
+          },
+          legend: {
+            labels: {
+              fontColor: 'black', // set legend font color to black
+
+            }
+          },    
+      responsive: true,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+            fontColor: 'black', // set font color to black
+            fontSize: 16, // set font size to 16
+            fontWeight: 'bold' // set font weight to bold
+          }
+        }],
+
+        xAxes: [{
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+              fontColor: 'black', // set font color to black
+              fontSize: 16, // set font size to 16
+              fontWeight: 'bold' // set font weight to bold
+            }
+          }],
+      },
+      hover: {
+        mode: null
+      }
+      
+    }
+  };
+
+  // Create a new bar chart
+  const goalChart = new Chart(
+    document.getElementById('goals-per-team-plot'),
+    config
+  );
+</script>
