@@ -125,7 +125,16 @@ class Pool(models.Model):
 
         return ranked_computed_teams
 
-  
+class Place(models.Model):
+    name =  models.CharField(max_length=80)
+    longitude = models.FloatField(null=False)
+    latitude =  models.FloatField(null=False)
+    def __str__(self):
+        return self.name
+    def script(self):
+        return {"name": self.name, "latitude": self.latitude, "longitude": self.longitude}
+        #return '[{"name":"' + str(self.name) + '", "latitude":"' + str(self.latitude) +'", "longitude":"'+str(self.longitude)+'"}]'
+            
 class Match(models.Model):
 
     """
@@ -139,9 +148,9 @@ class Match(models.Model):
     score1 = models.IntegerField(default=0)
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
-    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    localisation = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True)
     round = models.IntegerField(default=1)
-    
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)

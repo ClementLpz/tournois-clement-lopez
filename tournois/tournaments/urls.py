@@ -34,5 +34,9 @@ urlpatterns = [
     
     #ex : /tournaments/pool/1/scatter_plot
     path('pool/<int:pool_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
+    
+    path('pool/<int:pool_id>/goals_per_team_plot/', views.goals_per_team_plot, name='goals_per_team_plot'),
+    
+    path('pool/<int:pool_id>/goals_per_match_plot/', views.goals_per_match_plot, name='goals_per_match_plot'),
 
 ]

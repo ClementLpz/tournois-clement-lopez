@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% load static %}
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -8,6 +9,13 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block title %}Pool Details{% endblock title%}
 
 {% block content %}
+
+<div id="mapid"></div>
+<script >
+    var localisations = {{serialized_localisation | safe}}
+</script>
+<script src="{% static 'tournaments/script.js' %}"></script>
+
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
@@ -114,6 +122,46 @@ Extend site-wide base HTML template located in main templates/ dir
     <a class="btn btn-primary" href="{% url 'tournaments:compute_matches' pool.id 1 %}">Compute all matches possible</a>
     {% endif %}    
 {% endif %}
+
+
+
+<style>
+    
+    #scatter-plot {
+        max-width: 80%;
+        margin: 0 auto;
+        background-color: #F9C51E;
+    }
+    
+    #goals-per-team-plot {
+        max-width: 80%;
+        margin: 0 auto;
+        background-color: #F67C23;
+    }
+    
+    #goals-per-match-plot {
+        max-width: 80%;
+        margin: 0 auto;
+        background-color: #DE1E3D;
+    }
+
+</style>
+
+
+
+
+<div>
+    {% include 'tournaments/scatter_plot.html' %}
+</div>
+
+<div>
+    {% include 'tournaments/goals_per_team_plot.html' %}
+</div>
+
+<div>
+    {% include 'tournaments/goals_per_match_plot.html' %}
+</div>
+
 
 
 {% endblock content %}
