@@ -12,7 +12,7 @@
 
 <script>
   // Get data for the bar chart
-  const labels = [
+  const names = [
     {% for team in teams_ranked %}
       "{{ team.name }}",
     {% endfor %}
@@ -28,7 +28,7 @@
     {% endfor %}
   ];
   const goalData = {
-    labels: labels,
+    labels: names,
     datasets: [{
       label: 'Buts Marqués',
       data: goalsScored,
@@ -40,8 +40,8 @@
     }, {
       label: 'Buts Reçus',
       data: goalsConceded,
-      backgroundColor: '#AA061F',
-      borderColor: '#AA061F',
+      backgroundColor: '#DE1E3D',
+      borderColor: '#DE1E3D',
       borderWidth: 1,
       borderRadius: 10
       

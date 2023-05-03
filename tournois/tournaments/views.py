@@ -69,10 +69,26 @@ def pool_details(request, pool_id):
     :param request: The incoming request
     :param pool_id: The id of the selected pool
     """
+    
+    
+    
+    pool = Pool.objects.get(id=pool_id)
+    matches = Match.objects.filter(pool__id=pool_id).order_by('id')
+    labels = []
+    data = []
+
+    for match in matches:
+        labels.append(str(match.team1) + ' vs ' + str(match.team2))
+        data.append(match.score1 + match.score2)
+
+    chart = {
+        'labels': labels,
+        'data': data,
+    }
 
     pool = get_object_or_404(Pool, pk=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked}
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart)}
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
 def match_details(request, match_id):

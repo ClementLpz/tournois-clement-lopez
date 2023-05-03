@@ -5,7 +5,7 @@
     }
   </style>
 <!-- Add a canvas element for the bar chart -->
-<canvas id="goals-per-team-plot"></canvas>
+<canvas id="goals-per-match-plot"></canvas>
 
 <!-- Include Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
@@ -18,7 +18,7 @@
   const totalGoals = chart.data;
 
 
-  const goalData = {
+  const goalData2 = {
     labels: labels,
     datasets: [{
       label: 'Buts dans le Match',
@@ -32,9 +32,9 @@
   };
 
   // Set options for the bar chart
-  const config = {
+  const config2 = {
     type: 'bar',
-    data: goalData,
+    data: goalData2,
     options: {
         title: {
             display: true,
@@ -79,8 +79,8 @@
   };
 
   // Create a new bar chart
-  const goalChart = new Chart(
-    document.getElementById('goals-per-team-plot'),
-    config
+  const goalChart2 = new Chart(
+    document.getElementById('goals-per-match-plot'),
+    config2
   );
 </script>
