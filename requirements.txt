@@ -18,3 +18,4 @@ soupsieve==2.4.1
 sqlparse==0.4.3
 tqdm==4.65.0
 tzdata==2023.3
+django-mathfilters-1.0.0

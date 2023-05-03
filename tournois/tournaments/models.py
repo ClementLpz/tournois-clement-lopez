@@ -135,6 +135,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
+    round = models.IntegerField(default=1)
     
 
     def __str__(self):
