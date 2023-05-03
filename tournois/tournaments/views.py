@@ -1,8 +1,9 @@
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
+from django.core import serializers
 
-from .models import Tournament, Pool, Match, Comment
+from .models import Tournament, Pool, Match, Comment, Place
 from .forms import CommentForm
 
 def user_authentication(request, context):
@@ -69,10 +70,18 @@ def pool_details(request, pool_id):
     :param request: The incoming request
     :param pool_id: The id of the selected pool
     """
-
+    
     pool = get_object_or_404(Pool, pk=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked}
+    matchs = pool.match_set.all()
+    loc  = []
+    for match in matchs:
+        if match.localisation is not None:
+            loc.append(match.localisation)
+
+    serialized_localisation = serializers.serialize("json", loc)
+    
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'serialized_localisation': serialized_localisation}
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
 def match_details(request, match_id):
@@ -85,7 +94,8 @@ def match_details(request, match_id):
     """
 
     match = get_object_or_404(Match, pk=match_id)
-    context = {'match' : match}
+    serialized_localisation = serializers.serialize("json", {match.localisation})
+    context = {'match' : match, 'serialized_localisation': serialized_localisation}
 
     if request.method == 'GET':
         form = CommentForm()

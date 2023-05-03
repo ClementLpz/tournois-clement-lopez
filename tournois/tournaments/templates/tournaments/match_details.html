@@ -1,5 +1,7 @@
 {% extends 'base.html'%}
 {% load bootstrap5 %}
+{% load static %}
+
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -9,6 +11,13 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block title %}Match Details{% endblock title%}
 
 {% block content %}
+
+<div id="mapid" ></div>
+<script>
+ var localisations = {{serialized_localisation | safe}}
+</script>
+<script src="{% static 'tournaments/script.js' %}">
+</script>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
