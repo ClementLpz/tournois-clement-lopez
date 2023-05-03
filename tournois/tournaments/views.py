@@ -2,6 +2,8 @@ import math
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
+
+import json
 from django.core import serializers
 from math import log2
 from django.contrib import messages
@@ -73,7 +75,27 @@ def pool_details(request, pool_id):
     :param pool_id: The id of the selected pool
     """
     
+
+    
+    
     pool = get_object_or_404(Pool, pk=pool_id)
+    matches = Match.objects.filter(pool__id=pool_id).order_by('id')
+    labels = []
+    data = []
+
+    for match in matches:
+        labels.append(str(match.team1) + ' vs ' + str(match.team2))
+        data.append(match.score1 + match.score2)
+
+    chart = {
+        'labels': labels,
+        'data': data,
+    }
+
+    pool = get_object_or_404(Pool, pk=pool_id)
+    teams_ranked = Pool.compute_ranking(pool)
+
+    
     teams_ranked = Pool.compute_ranking(pool)
     matchs = pool.match_set.all()
     loc  = []
@@ -82,8 +104,9 @@ def pool_details(request, pool_id):
             loc.append(match.localisation)
 
     serialized_localisation = serializers.serialize("json", loc)
-    
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'serialized_localisation': serialized_localisation}
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
+
+
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
 def match_details(request, match_id):
@@ -315,8 +338,31 @@ def final_round(request, tournament_id):
 
 def scatter_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
-    teams = pool.teams.all()
-    data = [(team.scored, team.conceded) for team in teams]
     teams_ranked = Pool.compute_ranking(pool)
-    context = {'teams_ranked' : teams_ranked, 'pool': pool} # Add tournament to the context
+    context = {'teams_ranked' : teams_ranked, 'pool': pool} 
     return render(request, 'tournaments/scatter_plot.html', context)
+
+def goals_per_team_plot(request, pool_id):
+    pool = Pool.objects.get(id=pool_id)
+    teams_ranked = Pool.compute_ranking(pool)
+    context = {'teams_ranked' : teams_ranked, 'pool': pool}
+    return render(request, 'tournaments/goals_per_team_plot.html', context)
+
+from django.http import JsonResponse
+
+def goals_per_match_plot(request, pool_id):
+    pool = Pool.objects.get(id=pool_id)
+    matches = Match.objects.filter(pool__id=pool_id).order_by('id')
+    labels = []
+    data = []
+
+    for match in matches:
+        labels.append(str(match.team1) + ' vs ' + str(match.team2))
+        data.append(match.score1 + match.score2)
+
+    chart = {
+        'labels': labels,
+        'data': data,
+    }
+
+    return render(request, 'tournaments/goals_per_match_plot.html', {'chart_data':json.dumps(chart)})

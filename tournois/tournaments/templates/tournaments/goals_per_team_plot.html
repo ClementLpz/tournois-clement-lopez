@@ -1,0 +1,103 @@
+{% load static %}
+<style>
+    body {
+      background-color: F67C23;
+    }
+  </style>
+<!-- Add a canvas element for the bar chart -->
+<canvas id="goals-per-team-plot"></canvas>
+
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+<script>
+  // Get data for the bar chart
+  const names = [
+    {% for team in teams_ranked %}
+      "{{ team.name }}",
+    {% endfor %}
+  ];
+  const goalsScored = [
+    {% for team in teams_ranked %}
+      "{{ team.scored }}",
+    {% endfor %}
+  ];
+  const goalsConceded = [
+    {% for team in teams_ranked %}
+      "{{ team.conceded }}",
+    {% endfor %}
+  ];
+  const goalData = {
+    labels: names,
+    datasets: [{
+      label: 'Buts Marqués',
+      data: goalsScored,
+      backgroundColor: '#06125B ',
+      borderColor: '#06125B ',
+      borderWidth: 1,
+      
+      
+    }, {
+      label: 'Buts Reçus',
+      data: goalsConceded,
+      backgroundColor: '#DE1E3D',
+      borderColor: '#DE1E3D',
+      borderWidth: 1,
+      borderRadius: 10
+      
+    }]
+  };
+
+  // Set options for the bar chart
+  const config = {
+    type: 'bar',
+    data: goalData,
+    options: {
+        title: {
+            display: true,
+            text: 'Buts Marqués et Reçus par Équipe',
+            fontColor: 'black', // set title font color to black
+            fontSize: 20, // set title font size to 20
+            fontWeight: 'bold' // set title font weight to bold
+          },
+          legend: {
+            labels: {
+              fontColor: 'black', // set legend font color to black
+
+            }
+          },    
+      responsive: true,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            stepSize: 1,
+            fontColor: 'black', // set font color to black
+            fontSize: 16, // set font size to 16
+            fontWeight: 'bold' // set font weight to bold
+          }
+        }],
+
+        xAxes: [{
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+              fontColor: 'black', // set font color to black
+              fontSize: 16, // set font size to 16
+              fontWeight: 'bold' // set font weight to bold
+            }
+          }],
+      },
+      hover: {
+        mode: null
+      }
+      
+    }
+  };
+
+  // Create a new bar chart
+  const goalChart = new Chart(
+    document.getElementById('goals-per-team-plot'),
+    config
+  );
+</script>
