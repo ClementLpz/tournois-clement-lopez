@@ -137,8 +137,8 @@ class Match(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, null=True)
     round = models.IntegerField(null=True) 
     
-    class Meta:
-        unique_together = (('team1', 'team2', 'round'),)
+    # class Meta:
+    #     unique_together = (('team1', 'team2', 'round'),)
 
     def __str__(self):
         return str(self.score1) + " " + str(self.team1) + " vs " + str(self.team2) + " " + str(self.score2)
@@ -176,7 +176,7 @@ class FinalRound(models.Model):
     """
     A final round, with one tournament, and several matches
     """
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    tournament = models.OneToOneField(Tournament, on_delete=models.CASCADE)
     matches = models.ManyToManyField(Match)
     rounds = models.IntegerField(default=1)  
 
