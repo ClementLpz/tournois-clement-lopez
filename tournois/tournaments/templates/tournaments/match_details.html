@@ -21,6 +21,7 @@ Extend site-wide base HTML template located in main templates/ dir
 <script src="{% static 'tournaments/script.js' %}">
 </script>
 
+<!-- Barre de navigation -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
         {% if username %}
@@ -53,6 +54,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 <br> 
 
+<!-- Détails du match sélectionné -->
 <div class="row pb-3">
     <h1>Match : {{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</h1> <br> 
 </div>
@@ -69,12 +71,13 @@ Extend site-wide base HTML template located in main templates/ dir
     </h3>
 </div>
 
+<!-- Liste des commentaires -->
 <div class="row pb-3">
     <h1>Comments</h1>
 </div>
 
 <div class="row">
-    {% if match.comment_set.all %}
+    {% if comment_ordered %}
 
         <table class="table table-striped">
 
@@ -88,11 +91,12 @@ Extend site-wide base HTML template located in main templates/ dir
             </thead>
 
             <tbody>
-                {% for comment in match.comment_set.all %}
+                {% for comment in comment_ordered %}
                     <tr>
                         <td>{{ comment.author }}</td>
                         <td>{{ comment.pub_date }}</td>
                         <td>
+                            <!-- Formulaire pour modifier un commentaire -->
                             {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
                                 <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST" class="form">
                                     {% csrf_token %}
@@ -107,6 +111,7 @@ Extend site-wide base HTML template located in main templates/ dir
                             {% endif %}
                         </td>
                         <td>
+                            <!-- Boutons pour éditer les commentaires -->
                             {% if username|stringformat:"s" == comment.author %}
                                 {% if not form or form.instance.id != comment.id %}
                                     <a class="btn btn-primary" href="{% url 'tournaments:update_comment' match.id comment.id %}">Edit</a>
@@ -127,6 +132,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 <br> <br>
 
+<!-- Formulaire pour modifier un commentaire -->
 <div class="row">
     {% if username %}
         <form action="{% url 'tournaments:match_details' match.id %}" method="POST" class="form">

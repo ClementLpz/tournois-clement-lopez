@@ -2,11 +2,11 @@ import math
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
-import re
-
+from django.http import JsonResponse
 from .models import Tournament, Pool, Match, Comment, Team, FinalRound
 from .forms import CommentForm, ResearchForm
 import json
+import re
 from django.core import serializers
 from math import log2
 from django.contrib import messages
@@ -37,45 +37,54 @@ def tournaments_list(request):
     context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
+def match_date(date):
 
-def match_date(date) : # Parse date format '2 mai 2005' into '2005-05-02'
+    """
+    Format the date to match the date attribute of Match model
+    :param date: The date to format
+    """
+
     month = ""
-    match date[1].lower() :
-        case "janvier" | "january" :
-            month = "01"
-        case "février" | "february" :
-            month = "02"
-        case "mars" | "march":
-            month = "03"
-        case "avril" | "april":
-            month = "04"
-        case "mai" | "may":
-            month = "05"
-        case "juin" | "june":
-            month = "06"
-        case "juillet" | "july":
-            month = "07"
-        case "août" | "august":
-            month = "08"
-        case "septembre" | "september":
-            month = "09"
-        case "octobre" | "october":
-            month = "10"
-        case "novembre" | "november":
-            month = "11"
-        case "décembre" | "december":
-            month = "12"
-        case _ :
-            month = "01" # Default = January
-    
-    if (len(date[0]) == 1) : 
+    if date[1].lower() in ["janvier", "january"]:
+        month = "01"
+    elif date[1].lower() in ["février", "february"]:
+        month = "02"
+    elif date[1].lower() in ["mars", "march"]:
+        month = "03"
+    elif date[1].lower() in ["avril", "april"]:
+        month = "04"
+    elif date[1].lower() in ["mai", "may"]:
+        month = "05"
+    elif date[1].lower() in ["juin", "june"]:
+        month = "06"
+    elif date[1].lower() in ["juillet", "july"]:
+        month = "07"
+    elif date[1].lower() in ["août", "august"]:
+        month = "08"
+    elif date[1].lower() in ["septembre", "september"]:
+        month = "09"
+    elif date[1].lower() in ["octobre", "october"]:
+        month = "10"
+    elif date[1].lower() in ["novembre", "november"]:
+        month = "11"
+    elif date[1].lower() in ["décembre", "december"]:
+        month = "12"
+    else:
+        month = "01" # January by default
+
+    if (len(date[0]) == 1):
         date_str = date[2] + "-" + month + "-0" + date[0]
-    else :
+    else:
         date_str = date[2] + "-" + month + "-" + date[0]
 
     return date_str
 
-def context_reset(context) : # Reset all (exept research) fields of context
+def context_reset(context) :
+
+    """
+    Reset all (exept research) fields of context
+    :param context: The incoming context
+    """
 
     context['teams'] = []
     context['tournaments'] = []
@@ -90,7 +99,20 @@ def context_reset(context) : # Reset all (exept research) fields of context
     return context
 
 def context_fill(context, form, key_word, date_search, date_2_search, score_search, pool_search, goal_search, multisearch) :
-    
+
+    """
+    Fill in the context with every research filters
+    :param context: The incoming context
+    :param form: The research form
+    :param key_word: If multisearching, one of the keywords of the research
+    :param date_search: The date pattern to match for the research content
+    :param date_2_search: The second date pattern to match for the research content
+    :param score_search: The score pattern to match for the research content
+    :param pool_search: The pool number pattern to match for the research content
+    :param goal_search: The number of goals pattern to match for the research content
+    :param multisearch: Boolean to know if we use multi-searching
+    """
+
     # To keep the previous filtered objects in memory
     if multisearch :
         pk_multi_search_list = [obj.pk for obj in context['multi_search']]
@@ -155,6 +177,11 @@ def context_fill(context, form, key_word, date_search, date_2_search, score_sear
     return context
 
 def research(request):
+
+    """
+    Analyze and filter information coming from the research bar
+    :param request: The incoming request
+    """
 
     if request.method == 'GET':
         form = ResearchForm()
@@ -282,8 +309,15 @@ def pool_details(request, pool_id):
             loc.append(match.localisation)
 
     serialized_localisation = serializers.serialize("json", loc)
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
 
+    
+    # If "reset_pairings" was clicked, erase all matches from the final round
+    if request.method == "POST" and "reset_matchs" in request.POST:
+        matches = Match.objects.all().filter(pool__number = pool.number)
+        for match in matches :
+            match.delete()
+
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
 
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
@@ -314,9 +348,11 @@ def match_details(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()                  
+            comment.save()                 
             context['form'] = form
-    
+
+    comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+    context['comment_ordered'] = comment_ordered  
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
 
 #Almost like match_details but another render since it's a finalround match and that created problems with the Ariane wire
@@ -333,9 +369,11 @@ def match_details_finals(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()                  
+            comment.save()                
             context['form'] = form
     
+    comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+    context['comment_ordered'] = comment_ordered  
     return render(request,'tournaments/match_details_finals.html', user_authentication(request, context))
     
 def update_comment(request, match_id, comment_id):
@@ -354,10 +392,14 @@ def update_comment(request, match_id, comment_id):
     comment.pub_date = timezone.now()
     if request.method == 'GET':
         form = CommentForm(instance=comment)
+        comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+        context['comment_ordered'] = comment_ordered  
     elif request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
+            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+            context['comment_ordered'] = comment_ordered  
             return redirect('tournaments:match_details', match_id)
     
     context['form'] = form
@@ -528,7 +570,6 @@ def goals_per_team_plot(request, pool_id):
     context = {'teams_ranked' : teams_ranked, 'pool': pool}
     return render(request, 'tournaments/goals_per_team_plot.html', context)
 
-from django.http import JsonResponse
 
 def goals_per_match_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
