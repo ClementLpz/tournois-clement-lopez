@@ -2,8 +2,7 @@ import math
 from django.shortcuts import redirect, render, get_list_or_404, get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
-import re
-
+from django.http import JsonResponse
 from .models import Tournament, Pool, Match, Comment, Team, FinalRound
 from .forms import CommentForm, ResearchForm
 import json
@@ -526,7 +525,6 @@ def goals_per_team_plot(request, pool_id):
     context = {'teams_ranked' : teams_ranked, 'pool': pool}
     return render(request, 'tournaments/goals_per_team_plot.html', context)
 
-from django.http import JsonResponse
 
 def goals_per_match_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
