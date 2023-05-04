@@ -38,6 +38,12 @@ def tournaments_list(request):
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
 def match_date(date):
+
+    """
+    Format the date to match the date attribute of Match model
+    :param date: The date to format
+    """
+
     month = ""
     if date[1].lower() in ["janvier", "january"]:
         month = "01"
@@ -64,7 +70,7 @@ def match_date(date):
     elif date[1].lower() in ["décembre", "december"]:
         month = "12"
     else:
-        month = "01"
+        month = "01" # January by default
 
     if (len(date[0]) == 1):
         date_str = date[2] + "-" + month + "-0" + date[0]
@@ -73,7 +79,12 @@ def match_date(date):
 
     return date_str
 
-def context_reset(context) : # Reset all (exept research) fields of context
+def context_reset(context) :
+
+    """
+    Reset all (exept research) fields of context
+    :param context: The incoming context
+    """
 
     context['teams'] = []
     context['tournaments'] = []
@@ -88,7 +99,20 @@ def context_reset(context) : # Reset all (exept research) fields of context
     return context
 
 def context_fill(context, form, key_word, date_search, date_2_search, score_search, pool_search, goal_search, multisearch) :
-    
+
+    """
+    Fill in the context with every research filters
+    :param context: The incoming context
+    :param form: The research form
+    :param key_word: If multisearching, one of the keywords of the research
+    :param date_search: The date pattern to match for the research content
+    :param date_2_search: The second date pattern to match for the research content
+    :param score_search: The score pattern to match for the research content
+    :param pool_search: The pool number pattern to match for the research content
+    :param goal_search: The number of goals pattern to match for the research content
+    :param multisearch: Boolean to know if we use multi-searching
+    """
+
     # To keep the previous filtered objects in memory
     if multisearch :
         pk_multi_search_list = [obj.pk for obj in context['multi_search']]
@@ -153,6 +177,11 @@ def context_fill(context, form, key_word, date_search, date_2_search, score_sear
     return context
 
 def research(request):
+
+    """
+    Analyze and filter information coming from the research bar
+    :param request: The incoming request
+    """
 
     if request.method == 'GET':
         form = ResearchForm()

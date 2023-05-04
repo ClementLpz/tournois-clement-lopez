@@ -10,6 +10,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
+<!-- Barre de navigation -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
         {% if username %}
@@ -41,6 +42,7 @@ Extend site-wide base HTML template located in main templates/ dir
     <br>
 </div>
 
+<!-- Formulaire de recherche -->
 <form action="{% url 'tournaments:research' %}" method="POST" class="form">
     {% csrf_token %}
     {% bootstrap_form form %}
@@ -50,6 +52,7 @@ Extend site-wide base HTML template located in main templates/ dir
     {% endbuttons %}
 </form>
 
+<!-- Affichage des résultats par catégorie de filtre -->
 {% if not research|stringformat:"s" == "" %}
 
     <div class="row pb-3">
@@ -64,6 +67,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
         <tbody>
 
+            <!-- Affichage des tournois par nom -->
             {% if tournaments %}
                 <tr>
                     <th><h5>Tournaments by name : </h5></th>
@@ -76,7 +80,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des équipes par nom -->
             {% if teams %}
                 <tr>
                     <th><h5>Teams by name : </h5></th>
@@ -90,6 +95,7 @@ Extend site-wide base HTML template located in main templates/ dir
                 </tr>
             {% endif %}
             
+            <!-- Affichage des matchs par nom d'équipe -->
             {% if matchs_team %}
                 <tr>
                     <th><h5>Match by team : </h5></th>
@@ -123,6 +129,7 @@ Extend site-wide base HTML template located in main templates/ dir
                 </tr>
             {% endif %}
             
+            <!-- Affichage des matchs par date -->
             {% if matchs_date %}
                 <tr>
                     <th><h5>Match by date : </h5></th>
@@ -155,7 +162,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des matchs par score -->
             {% if matchs_scores %}
                 <tr>
                     <th><h5>Match by score : </h5></th>
@@ -188,7 +196,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des matchs par un nombre de buts marqués -->
             {% if matchs_goal %}
                 <tr>
                     <th><h5>Match by goal : </h5></th>
@@ -221,7 +230,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des matchs par un numéro de poule -->
             {% if matchs_pool %}
                 <tr>
                     <th><h5>Match by pool number : </h5></th>
@@ -254,7 +264,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des matchs par nom de tournoi -->
             {% if matchs_tournament %}
                 <tr>
                     <th><h5>Match by tournament name : </h5></th>
@@ -287,7 +298,8 @@ Extend site-wide base HTML template located in main templates/ dir
                     </td>
                 </tr>
             {% endif %}
-
+            
+            <!-- Affichage des matchs par multi-searching, avec la possiblité d'ajouter plusieurs filtres -->
             {% if multi_search %}
                 <tr>
                     <th><h5>Match with multi searching : </h5></th>
