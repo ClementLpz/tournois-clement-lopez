@@ -558,21 +558,23 @@ def final_round(request, tournament_id):
         }
         return render(request, 'tournaments/final_round.html', user_authentication(request, context))
 
+
+# This view generates a scatter plot of the teams in a pool based on their ranking.
 def scatter_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
     context = {'teams_ranked' : teams_ranked, 'pool': pool} 
     return render(request, 'tournaments/scatter_plot.html', context)
 
+# This view generates a bar plot of the total number of goals scored by each team in a pool.
 def goals_per_team_plot(request, pool_id):
     pool = Pool.objects.get(id=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
     context = {'teams_ranked' : teams_ranked, 'pool': pool}
     return render(request, 'tournaments/goals_per_team_plot.html', context)
 
-
+# This view generates a bar plot of the total number of goals scored in each match of a pool.
 def goals_per_match_plot(request, pool_id):
-    pool = Pool.objects.get(id=pool_id)
     matches = Match.objects.filter(pool__id=pool_id).order_by('id')
     labels = []
     data = []
