@@ -120,9 +120,10 @@ def match_details(request, match_id):
 
 
     match = get_object_or_404(Match, pk=match_id)
-    if match.localisation is not None : 
+    
+    if match.localisation is not None:
         serialized_localisation = serializers.serialize("json", {match.localisation})
-    else: 
+    else:
         serialized_localisation=None
     context = {'match' : match, 'serialized_localisation': serialized_localisation}
 
