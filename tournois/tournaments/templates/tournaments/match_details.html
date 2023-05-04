@@ -74,7 +74,7 @@ Extend site-wide base HTML template located in main templates/ dir
 </div>
 
 <div class="row">
-    {% if match.comment_set.all %}
+    {% if comment_ordered %}
 
         <table class="table table-striped">
 
@@ -88,7 +88,7 @@ Extend site-wide base HTML template located in main templates/ dir
             </thead>
 
             <tbody>
-                {% for comment in match.comment_set.all %}
+                {% for comment in comment_ordered %}
                     <tr>
                         <td>{{ comment.author }}</td>
                         <td>{{ comment.pub_date }}</td>

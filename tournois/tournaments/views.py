@@ -348,7 +348,9 @@ def match_details(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()                  
+            comment.save()
+            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+            context['comment_ordered'] = comment_ordered                  
             context['form'] = form
     
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
@@ -367,7 +369,9 @@ def match_details_finals(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()                  
+            comment.save()
+            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+            context['comment_ordered'] = comment_ordered                  
             context['form'] = form
     
     return render(request,'tournaments/match_details_finals.html', user_authentication(request, context))
