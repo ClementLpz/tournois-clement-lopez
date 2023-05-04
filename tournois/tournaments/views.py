@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from .models import Tournament, Pool, Match, Comment, Team, FinalRound
 from .forms import CommentForm, ResearchForm
 import json
+import re
 from django.core import serializers
 from math import log2
 from django.contrib import messages
