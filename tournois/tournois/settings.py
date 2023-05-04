@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +26,12 @@ SECRET_KEY = 'django-insecure-$^&^(fddp4@@mxb#&b5mhfk*c%u6c423etxu*^mb8vgu0b#izf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+
+
 ALLOWED_HOSTS = []
 
 
@@ -34,11 +41,17 @@ INSTALLED_APPS = [
     'tournaments.apps.TournamentsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
+    'mathfilters',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     "bootstrap5",
+    
+    
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -120,6 +133,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [ BASE_DIR / 'static']
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -128,3 +142,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # url to redirect after successfull login
 LOGIN_REDIRECT_URL = '../../tournaments/'
 LOGOUT_REDIRECT_URL = '../../tournaments/'
+

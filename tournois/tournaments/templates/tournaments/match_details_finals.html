@@ -1,7 +1,5 @@
 {% extends 'base.html'%}
 {% load bootstrap5 %}
-{% load static %}
-
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -12,13 +10,6 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
-<div id="mapid" ></div>
-<script>
- var localisations = {{serialized_localisation | safe}}
-</script>
-<script src="{% static 'tournaments/script.js' %}">
-</script>
-
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
         {% if username %}
@@ -28,8 +19,6 @@ Extend site-wide base HTML template located in main templates/ dir
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournaments_list' %}">Tournament list</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}">{{ match.pool.tournament.name }}</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:pool_details' match.pool.id %}">Pool number {{ match.pool.number }}</a></li>
                 <li class="nav-item"><a class="nav-link">Match : {{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a></li>
             </ul>
         </div>
@@ -92,7 +81,7 @@ Extend site-wide base HTML template located in main templates/ dir
                         <td>{{ comment.pub_date }}</td>
                         <td>
                             {% if username|stringformat:"s" == comment.author and form and form.instance.id == comment.id %}
-                                <form action="{% url 'tournaments:update_comment' match.id form.instance.id %}" method="POST" class="form">
+                                <form action="{% url 'tournaments:update_comment_finals' match.id form.instance.id %}" method="POST" class="form">
                                     {% csrf_token %}
                                     {% bootstrap_form form %}
 
@@ -107,7 +96,7 @@ Extend site-wide base HTML template located in main templates/ dir
                         <td>
                             {% if username|stringformat:"s" == comment.author %}
                                 {% if not form or form.instance.id != comment.id %}
-                                    <a class="btn btn-primary" href="{% url 'tournaments:update_comment' match.id comment.id %}">Edit</a>
+                                    <a class="btn btn-primary" href="{% url 'tournaments:update_comment_finals' match.id comment.id %}">Edit</a>
                                 {% endif %}
                             {% endif %}
                         </td>
@@ -127,7 +116,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 <div class="row">
     {% if username %}
-        <form action="{% url 'tournaments:match_details' match.id %}" method="POST" class="form">
+        <form action="{% url 'tournaments:match_details_finals' match.id %}" method="POST" class="form">
             {% csrf_token %}
             <label for="message"> Comment the match :</label>
             <input type="text" id="message" name="message"> <br/> <br/>

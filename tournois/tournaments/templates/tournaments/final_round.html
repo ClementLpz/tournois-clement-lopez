@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load mathfilters custom_filters %}
+{%load static%}
+{% block content %}
+
+<!-- including style.css -->
+<link rel="stylesheet" type="text/css" href="{% static 'tournament/style.css' %}">
+
+<!-- Classic menu  -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        {% if username %}
+            <a class="navbar-brand">Welcome <b>{{ username }}</b> !</a>
+        {% endif %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournaments_list' %}">Tournament list</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournament_details' tournament_id %}">Pool list</a></li>
+            </ul>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            {% if username %}
+                <form action="{%url 'logout'%}">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <li><button type="submit" class="btn btn-danger navbar-btn"><span class="glyphicon glyphicon-log-out"></span>Logout</button></li>
+                </form>
+            {% else %}
+                <form action="{%url 'login'%}">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <li><button type="submit" class="btn btn-danger navbar-btn"><span class="glyphicon glyphicon-log-in"></span>Login</button></li>
+                </form>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<h1>Final Round - {{ final_round.tournament.name }}</h1>
+
+<p>Total matches: {{ final_round.matches.all|length }}</p>
+<!-- Reset pairings -->
+
+{% if user.is_authenticated and user.is_superuser %}
+<p>Note : this is a final round tournament, so the score cannot be even. If a team wins due to penalty shootout, you should enter this score instead.</p>
+<!-- Reset pairings button form -->
+<form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
+    <input type="hidden" name="reset_pairings" value="true">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Reset pairings</button>
+  </form>
+
+{% endif %}
+<!-- Tournament container -->
+<div class="tournament-container">
+    <!-- Round 1 -->
+    <div class="round">
+        <h2><b>Round 1</b></h2>
+        {% for match in match_col1 %}
+        <div class="match">
+            <!-- Team 1 -->
+            <div>
+                <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                    {{ match.team1.name }}
+                </a></b>
+                {% with score1=match.score1 %}
+                <!-- Display Team 1 score -->
+                {% if score1 != None %}({{ score1 }})  //  {% endif %}
+                {% endwith %}
+            </div>
+            <!-- Team 2 -->
+            <div>
+                <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                    {{ match.team2.name }}
+                </a></b>
+                {% with score2=match.score2 %}
+                <!-- Display Team 2 score -->
+                {% if score2 != None %}({{ score2 }}){% endif %}
+                {% endwith %}
+            </div>
+            <!-- Match details -->
+            <div>{{ match.date }}</div>
+            <div>{{ match.hour }}</div>
+            <div>{{ match.place }}</div>
+
+        {% if user.is_authenticated and user.is_superuser and not can_enter_column2_scores%}
+        <!-- Enter score form -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}} :</label>
+                <!-- Enter Team 1 score -->
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <!-- Enter Team 2 score -->
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <!-- Submit scores button -->
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+
+{% if match_col2%}
+<!-- Round 2 -->
+<div class="round">
+    <h2><b>Round 2</b></h2>
+    {% for match in match_col2 %}
+    <div class="match">
+        <div>
+        <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+            {{ match.team1.name }}
+        </a></b>
+        {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
+        <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+            {{ match.team2.name }}
+        </a></b> {% with score2=match.score2 %}
+        {% if score2 != None %}({{ score2 }}){% endif %}
+        {% endwith %}
+
+    </div>
+        <div>{{ match.date }}</div>
+        <div>{{ match.hour }}</div>
+        <div>{{ match.place }}</div>
+
+        {% if user.is_authenticated and user.is_superuser and can_enter_column2_scores and not can_enter_column3_scores %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}} :</label>
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{%endif%}
+
+<!-- Round 3 -->
+{% if match_col3%}
+<div class="round">
+    <h2><b>Round 3</b></h2>
+    {% for match in match_col3 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
+                <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                    {{ match.team2.name }}
+                </a></b>
+                {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}  
+        </div>
+        
+        <div>{{ match.date }}</div>
+        <div>{{ match.hour }}</div>
+        <div>{{ match.place }}</div>
+
+        {% if user.is_authenticated and user.is_superuser and can_enter_column3_scores and not can_enter_column4_scores %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}} :</label>
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{%endif%}
+
+<!-- Round 4 -->
+{% if match_col4%}
+<div class="round">
+    <h2><b>Round 4</b></h2>
+    {% for match in match_col4 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}
+        
+        <div>{{ match.date }} </div>
+        <div>{{ match.hour }} </div>
+        <div>{{ match.place }} </div>
+
+        {% if user.is_authenticated and user.is_superuser and can_enter_column4_scores and not can_enter_column5_scores %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}}:</label>
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{%endif%}
+
+
+<!-- Round 5 -->
+{% if match_col5%}
+<div class="round">
+    <h2><b>Round 5</b></h2>
+    {% for match in match_col5 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }}){% endif %}
+            {% endwith %}
+        
+        <div>{{ match.date }} </div>
+        <div>{{ match.hour }} </div>
+        <div>{{ match.place }} </div>
+
+        {% if user.is_authenticated and user.is_superuser and can_enter_column5_scores and not not can_enter_column6_scores %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}} :</label>
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{%endif%}
+
+
+<!-- Round 6 -->
+{% if match_col6%}
+<div class="round">
+    <h2><b>Round 6</b></h2>
+    {% for match in match_col6 %}
+    <div class="match">
+        <div>
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team1.name }}
+            </a></b>
+            {% with score1=match.score1 %}
+            {% if score1 != None %}({{ score1 }})  //  {% endif %}
+            {% endwith %}
+        </div>
+        
+            <b><a href="{% url 'tournaments:match_details_finals' match.id %}">
+                {{ match.team2.name }}
+            </a></b>
+            {% with score2=match.score2 %}
+            {% if score2 != None %}({{ score2 }})  //  {% endif %}
+            {% endwith %}
+        
+        <div>{{ match.date }} </div>
+        <div>{{ match.hour }} </div>
+        <div>{{ match.place }} </div>
+
+        {% if user.is_authenticated and user.is_superuser and can_enter_column6_scores %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="team1_score">{{match.team1.name}}</label>
+                <input type="number" name="team1_score-{{ match.id }}" required min="0" id="team1_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="team2_score">{{match.team2.name}} :</label>
+                <input type="number" name="team2_score-{{ match.id }}" required min="0" id="team2_score-{{ match.id }}"
+                    class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Scores</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{%endif%}
+</div>
+{%endblock%}
