@@ -99,6 +99,11 @@ class Pool(models.Model):
 
         for team in teams:
             team.pool_points = 0
+            if team.scored is None:
+                team.scored = 0
+            if team.conceded is None : 
+                team.conceded=0
+
 
             for match in Match.objects.filter(pool=self):
                 match.team1.scored = 0
