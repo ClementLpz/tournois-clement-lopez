@@ -75,10 +75,9 @@ def pool_details(request, pool_id):
     :param pool_id: The id of the selected pool
     """
     
-
     
     
-    pool = get_object_or_404(Pool, pk=pool_id)
+    pool = Pool.objects.get(id=pool_id)
     matches = Match.objects.filter(pool__id=pool_id).order_by('id')
     labels = []
     data = []
@@ -94,19 +93,7 @@ def pool_details(request, pool_id):
 
     pool = get_object_or_404(Pool, pk=pool_id)
     teams_ranked = Pool.compute_ranking(pool)
-
-    
-    teams_ranked = Pool.compute_ranking(pool)
-    matchs = pool.match_set.all()
-    loc  = []
-    for match in matchs:
-        if match.localisation is not None:
-            loc.append(match.localisation)
-
-    serialized_localisation = serializers.serialize("json", loc)
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
-
-
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart)}
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
 def match_details(request, match_id):
@@ -336,10 +323,10 @@ def final_round(request, tournament_id):
         }
         return render(request, 'tournaments/final_round.html', user_authentication(request, context))
 
-def scatter_plot(request, pool_id):
-    pool = Pool.objects.get(id=pool_id)
-    teams_ranked = Pool.compute_ranking(pool)
-    context = {'teams_ranked' : teams_ranked, 'pool': pool} 
+def scatter_plot(request, finalround_id):
+    finalRound = FinalRound.objects.get(id=finalround_id)
+    teams_ranked = FinalRound.compute_ranking(finalRound)
+    context = {'teams_ranked' : teams_ranked, 'finalRound': finalRound} 
     return render(request, 'tournaments/scatter_plot.html', context)
 
 def goals_per_team_plot(request, pool_id):

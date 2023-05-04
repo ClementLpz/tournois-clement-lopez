@@ -33,7 +33,7 @@ urlpatterns = [
     path('<int:tournament_id>/final_round/', views.final_round, name='final_round'),
     
     #ex : /tournaments/pool/1/scatter_plot
-    path('pool/<int:pool_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
+    path('final_round/<int:finalround_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
     
     path('pool/<int:pool_id>/goals_per_team_plot/', views.goals_per_team_plot, name='goals_per_team_plot'),
     

@@ -301,3 +301,42 @@ class FinalRound(models.Model):
                 return self.matches.all()
             else:
                 winner1, winner2 = None, None
+                
+    def compute_ranking(self, Teams):
+        
+        team = Teams.objects.all()
+        computed_pool_points = {}
+        ranked_computed_teams = []
+
+        
+
+        for match in self.matches:
+            match.team1.scored=0
+            match.team1.conceded=0
+            match.team2.scored=0
+            match.team2.conceded=0
+
+            if match.team1 == team :
+                team.scored += match.score1
+                team.conceded += match.score2
+
+                if (match.score1 == match.score2) :
+                    team.pool_points += 1
+                elif (match.score1 > match.score2) :
+                    team.pool_points += 3
+
+            if match.team2 == team :
+                team.scored += match.score2
+                team.conceded += match.score1
+
+                if (match.score1 == match.score2) :
+                    team.pool_points += 1
+                elif (match.score2 > match.score1) :
+                    team.pool_points += 3
+
+        computed_pool_points[team] = team.pool_points
+
+        for k, v in sorted(computed_pool_points.items(), key=lambda x: -x[1]):
+            ranked_computed_teams.append(k)
+
+        return ranked_computed_teams
