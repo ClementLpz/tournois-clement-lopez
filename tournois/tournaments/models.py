@@ -170,10 +170,10 @@ class Match(models.Model):
             return None
     
     #For future improvements     
-    def clean(self):
-        super().clean()
-        if self.score1 == self.score2:
-            raise ValidationError("Les scores ne peuvent pas être égaux.")
+    # def clean(self):
+    #     super().clean()
+    #     if self.score1 == self.score2:
+    #         raise ValidationError("Les scores ne peuvent pas être égaux.")
 
 
 class Comment(models.Model):
