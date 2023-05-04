@@ -6,8 +6,10 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['message']
-        
 
+class ResearchForm(forms.Form):
+    research = forms.CharField(label="", max_length=100)
+        
 class ScoreForm(forms.Form):
     score1 = forms.IntegerField(min_value=0, label='Score 1')
     score2 = forms.IntegerField(min_value=0, label='Score 2')

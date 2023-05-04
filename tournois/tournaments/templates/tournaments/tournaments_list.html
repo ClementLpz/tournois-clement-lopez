@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% load bootstrap5 %}
 
 {% comment %}
 Extend site-wide base HTML template located in main templates/ dir
@@ -36,7 +37,15 @@ Extend site-wide base HTML template located in main templates/ dir
     </div>
 </nav>
 
-<br> 
+<div class="row pb-3">
+    <br>
+</div>
+
+<a href="{% url 'tournaments:research' %}"><button type="submit" class="btn btn-danger navbar-btn">Go to research</button></a>
+
+<div class="row pb-3">
+    <br>
+</div>
 
 <div class="row pb-3">
     <h1>Tournaments</h1>

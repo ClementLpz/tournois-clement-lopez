@@ -39,4 +39,7 @@ urlpatterns = [
     
     path('pool/<int:pool_id>/goals_per_match_plot/', views.goals_per_match_plot, name='goals_per_match_plot'),
 
+    # ex: /tournaments/research
+    path('research/', views.research, name='research'),
+
 ]

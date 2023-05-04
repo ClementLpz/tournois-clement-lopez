@@ -1,3 +1,4 @@
+from collections import defaultdict
 import random
 from django.db import models
 from django.dispatch import receiver
@@ -16,7 +17,7 @@ class Tournament(models.Model):
 
     name = models.CharField(max_length=200)
     place = models.CharField(max_length=200, null=True)
-    date = models.CharField(max_length=200, null=True)
+    date = models.DateField('Date of the tournament', null = True)
     N_pools = models.IntegerField('Number of pools')
     N_teams_per_pools = models.IntegerField('Number of teams per pools')
 
@@ -71,12 +72,16 @@ class Pool(models.Model):
         list_all_matches = list(self.teams.all())
         for i in range(n - 1):
             for j in range(i + 1, n):
-                match = Match(team1 = list_all_matches[i], 
-                              team2 = list_all_matches[j], 
-                              pool = self, 
-                              date = self.tournament.date,  
-                              hour = "10h - 12h", 
-                              place = self.tournament.place)
+                random_score1 = random.randint(0, 7)
+                random_score2 = random.randint(0, 7)
+                match = Match(team1=list_all_matches[i],
+                            team2=list_all_matches[j],
+                            pool=self,
+                            date=self.tournament.date,
+                            hour="10h - 12h",
+                            place=self.tournament.place,
+                            score1=random_score1,
+                            score2=random_score2)
                 match.save()
 
     """
@@ -86,36 +91,37 @@ class Pool(models.Model):
     :returns: a list with the teams ranked by pool points
     """
 
-    def compute_ranking(self):
+    def compute_ranking(self): 
         
         teams = self.teams.all()
-        computed_pool_points = {}
+        computed_pool_points = defaultdict(int)
         ranked_computed_teams = []
 
-        for team in teams :
+        for team in teams:
+            team.pool_points = 0
 
-            for match in Match.objects.filter(pool=self) :
-                match.team1.scored=0
-                match.team1.conceded=0
-                match.team2.scored=0
-                match.team2.conceded=0
+            for match in Match.objects.filter(pool=self):
+                match.team1.scored = 0
+                match.team1.conceded = 0
+                match.team2.scored = 0
+                match.team2.conceded = 0
 
-                if match.team1 == team :
+                if match.team1 == team:
                     team.scored += match.score1
                     team.conceded += match.score2
 
-                    if (match.score1 == match.score2) :
+                    if match.score1 == match.score2:
                         team.pool_points += 1
-                    elif (match.score1 > match.score2) :
+                    elif match.score1 > match.score2:
                         team.pool_points += 3
 
-                if match.team2 == team :
+                if match.team2 == team:
                     team.scored += match.score2
                     team.conceded += match.score1
 
-                    if (match.score1 == match.score2) :
+                    if match.score1 == match.score2:
                         team.pool_points += 1
-                    elif (match.score2 > match.score1) :
+                    elif match.score2 > match.score1:
                         team.pool_points += 3
 
             computed_pool_points[team] = team.pool_points
@@ -141,14 +147,14 @@ class Match(models.Model):
     A match, several by pools, involving two teams
     """
 
-    date = models.CharField(max_length=200)
+    date = models.DateField('Date of the tournament', null = True)
     hour = models.CharField(max_length=200)
     place = models.CharField(max_length=200)
     team1 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team1_set')
     score1 = models.IntegerField(default=0)
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
-    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, blank=True, null= True)
     localisation = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True)
     round = models.IntegerField(default=1)
 
@@ -164,10 +170,10 @@ class Match(models.Model):
             return None
     
     #For future improvements     
-    def clean(self):
-        super().clean()
-        if self.score1 == self.score2:
-            raise ValidationError("Les scores ne peuvent pas être égaux.")
+    # def clean(self):
+    #     super().clean()
+    #     if self.score1 == self.score2:
+    #         raise ValidationError("Les scores ne peuvent pas être égaux.")
 
 
 class Comment(models.Model):
