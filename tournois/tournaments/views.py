@@ -348,11 +348,11 @@ def match_details(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()
-            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
-            context['comment_ordered'] = comment_ordered                  
+            comment.save()                 
             context['form'] = form
-    
+
+    comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+    context['comment_ordered'] = comment_ordered  
     return render(request,'tournaments/match_details.html', user_authentication(request, context))
 
 #Almost like match_details but another render since it's a finalround match and that created problems with the Ariane wire
@@ -369,11 +369,11 @@ def match_details_finals(request, match_id):
                               match = match, 
                               pub_date = timezone.now(), 
                               author = request.user)
-            comment.save()
-            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
-            context['comment_ordered'] = comment_ordered                  
+            comment.save()                
             context['form'] = form
     
+    comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+    context['comment_ordered'] = comment_ordered  
     return render(request,'tournaments/match_details_finals.html', user_authentication(request, context))
     
 def update_comment(request, match_id, comment_id):
@@ -392,10 +392,14 @@ def update_comment(request, match_id, comment_id):
     comment.pub_date = timezone.now()
     if request.method == 'GET':
         form = CommentForm(instance=comment)
+        comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+        context['comment_ordered'] = comment_ordered  
     elif request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             form.save()
+            comment_ordered = Comment.objects.order_by('-pub_date').filter(match = match)
+            context['comment_ordered'] = comment_ordered  
             return redirect('tournaments:match_details', match_id)
     
     context['form'] = form
