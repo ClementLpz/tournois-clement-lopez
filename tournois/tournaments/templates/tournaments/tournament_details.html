@@ -10,6 +10,7 @@ Extend site-wide base HTML template located in main templates/ dir
 
 {% block content %}
 
+<!-- Barre de navigation -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container-fluid">
         {% if username %}
@@ -41,16 +42,18 @@ Extend site-wide base HTML template located in main templates/ dir
 <br> 
 
 <br> 
+<!-- Information du tournoi sélectionné -->
 <div class="row pb-3">
     <h2>{{ tournament.name }} <br/> <small>in {{ tournament.place }}, {{ tournament.date }}</small></h2>
 </div>
 
-
+<!-- Bouton pour accéder à la fonctionnalité F1 des matchs à élimination directe -->
 <form method="POST" action="{% url 'tournaments:final_round' tournament_id=tournament_id %}">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger"><b>Access Final Rounds</b></button>
   </form>
 
+<!-- Affichage des poules du tournoi -->
 <div class="row">
     {% if tournament.pool_set.all %}
         <table class="table table-striped">
