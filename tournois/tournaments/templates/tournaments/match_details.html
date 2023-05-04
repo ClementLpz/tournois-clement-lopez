@@ -13,9 +13,11 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block content %}
 
 <div id="mapid" ></div>
+{% if serialized_localisation%}
 <script>
  var localisations = {{serialized_localisation | safe}}
 </script>
+{%endif%}
 <script src="{% static 'tournaments/script.js' %}">
 </script>
 
