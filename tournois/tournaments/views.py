@@ -280,8 +280,15 @@ def pool_details(request, pool_id):
             loc.append(match.localisation)
 
     serialized_localisation = serializers.serialize("json", loc)
-    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
 
+    
+    # If "reset_pairings" was clicked, erase all matches from the final round
+    if request.method == "POST" and "reset_matchs" in request.POST:
+        matches = Match.objects.all().filter(pool__number = pool.number)
+        for match in matches :
+            match.delete()
+
+    context = {'pool' : pool, 'teams_ranked' : teams_ranked, 'chart_data':json.dumps(chart), 'serialized_localisation': serialized_localisation}
 
     return render(request,'tournaments/pool_details.html', user_authentication(request, context))
 
