@@ -37,40 +37,38 @@ def tournaments_list(request):
     context = {'tournaments_list' : tournaments_list}
     return render(request,'tournaments/tournaments_list.html', user_authentication(request, context))
 
-
-def match_date(date) : # Parse date format '2 mai 2005' into '2005-05-02'
+def match_date(date):
     month = ""
-    match date[1].lower() :
-        case "janvier" | "january" :
-            month = "01"
-        case "février" | "february" :
-            month = "02"
-        case "mars" | "march":
-            month = "03"
-        case "avril" | "april":
-            month = "04"
-        case "mai" | "may":
-            month = "05"
-        case "juin" | "june":
-            month = "06"
-        case "juillet" | "july":
-            month = "07"
-        case "août" | "august":
-            month = "08"
-        case "septembre" | "september":
-            month = "09"
-        case "octobre" | "october":
-            month = "10"
-        case "novembre" | "november":
-            month = "11"
-        case "décembre" | "december":
-            month = "12"
-        case _ :
-            month = "01" # Default = January
-    
-    if (len(date[0]) == 1) : 
+    if date[1].lower() in ["janvier", "january"]:
+        month = "01"
+    elif date[1].lower() in ["février", "february"]:
+        month = "02"
+    elif date[1].lower() in ["mars", "march"]:
+        month = "03"
+    elif date[1].lower() in ["avril", "april"]:
+        month = "04"
+    elif date[1].lower() in ["mai", "may"]:
+        month = "05"
+    elif date[1].lower() in ["juin", "june"]:
+        month = "06"
+    elif date[1].lower() in ["juillet", "july"]:
+        month = "07"
+    elif date[1].lower() in ["août", "august"]:
+        month = "08"
+    elif date[1].lower() in ["septembre", "september"]:
+        month = "09"
+    elif date[1].lower() in ["octobre", "october"]:
+        month = "10"
+    elif date[1].lower() in ["novembre", "november"]:
+        month = "11"
+    elif date[1].lower() in ["décembre", "december"]:
+        month = "12"
+    else:
+        month = "01"
+
+    if (len(date[0]) == 1):
         date_str = date[2] + "-" + month + "-0" + date[0]
-    else :
+    else:
         date_str = date[2] + "-" + month + "-" + date[0]
 
     return date_str
