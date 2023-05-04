@@ -3,6 +3,8 @@ from django.db import models
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.forms import ValidationError
+from django.db.models import Q
+
 
 import datetime
 from django.db.models.signals import post_save
@@ -24,7 +26,45 @@ class Tournament(models.Model):
         db_table = "tournaments_tournoi"
 
     def __str__(self):
-        return self.name    
+        return self.name   
+    
+    def compute_ranking(self):
+        teams = Team.objects.filter(pool__tournament=self).distinct()
+
+        computed_team_points = {}
+        ranked_computed_teams = []
+
+        for team in teams:
+            team.pool_points = 0
+            team.scored = 0
+            team.conceded = 0
+
+            for match in Match.objects.filter(Q(team1=team) | Q(team2=team)):
+                if match.team1 == team:
+                    team.scored += match.score1
+                    team.conceded += match.score2
+
+                    if match.score1 > match.score2:
+                        team.pool_points += 3
+                    elif match.score1 == match.score2:
+                        team.pool_points += 1
+
+                if match.team2 == team:
+                    team.scored += match.score2
+                    team.conceded += match.score1
+
+                    if match.score2 > match.score1:
+                        team.pool_points += 3
+                    elif match.score2 == match.score1:
+                        team.pool_points += 1
+
+            computed_team_points[team] = (team.pool_points, team.scored - team.conceded)
+
+        for k, v in sorted(computed_team_points.items(), key=lambda x: (-x[1][0], -x[1][1])):
+            ranked_computed_teams.append(k)
+
+        return ranked_computed_teams
+     
 
 class Team(models.Model):
 
@@ -149,6 +189,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team2_set')
     score2 = models.IntegerField(default=0)
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE) # add this line
     localisation = models.ForeignKey(Place, on_delete=models.SET_NULL, null=True)
     round = models.IntegerField(default=1)
 

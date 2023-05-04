@@ -336,10 +336,10 @@ def final_round(request, tournament_id):
         }
         return render(request, 'tournaments/final_round.html', user_authentication(request, context))
 
-def scatter_plot(request, pool_id):
-    pool = Pool.objects.get(id=pool_id)
-    teams_ranked = Pool.compute_ranking(pool)
-    context = {'teams_ranked' : teams_ranked, 'pool': pool} 
+def scatter_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams_ranked = Tournament.compute_ranking(tournament)
+    context = {'teams_ranked' : teams_ranked, 'tournament': tournament} 
     return render(request, 'tournaments/scatter_plot.html', context)
 
 def goals_per_team_plot(request, pool_id):
