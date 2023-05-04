@@ -13,9 +13,11 @@ Extend site-wide base HTML template located in main templates/ dir
 {% block content %}
 
 <div id="mapid" ></div>
+{% if serialized_localisation%}
 <script>
  var localisations = {{serialized_localisation | safe}}
 </script>
+{%endif%}
 <script src="{% static 'tournaments/script.js' %}">
 </script>
 
@@ -28,7 +30,7 @@ Extend site-wide base HTML template located in main templates/ dir
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournaments_list' %}">Tournament list</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}">{{ match.pool.tournament.name }}</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:tournament_details' match.pool.tournament.id %}">{{ match.pool.tournament.name }}</a></li> -->
                 <li class="nav-item"><a class="nav-link" href="{% url 'tournaments:pool_details' match.pool.id %}">Pool number {{ match.pool.number }}</a></li>
                 <li class="nav-item"><a class="nav-link">Match : {{ match.score1 }} <b>{{ match.team1.name }}</b> VS <b>{{ match.team2.name }}</b> {{ match.score2 }}</a></li>
             </ul>

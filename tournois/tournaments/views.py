@@ -118,8 +118,12 @@ def match_details(request, match_id):
     :param match_id: The id of the selected match
     """
 
+
     match = get_object_or_404(Match, pk=match_id)
-    serialized_localisation = serializers.serialize("json", {match.localisation})
+    if match.localisation is not None : 
+        serialized_localisation = serializers.serialize("json", {match.localisation})
+    else: 
+        serialized_localisation=None
     context = {'match' : match, 'serialized_localisation': serialized_localisation}
 
     if request.method == 'GET':
