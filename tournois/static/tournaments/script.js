@@ -12,10 +12,19 @@ var markerIcon = L.icon({
     shadowSize: [41, 41]
 });
 
+
+
 function success(pos){
     
     
-    map = L.map('mapid').setView([pos.coords.latitude, pos.coords.longitude], 6);
+    map = L.map('mapid',{
+        minZoom: 3, 
+        maxZoom: 15
+
+
+    }
+    
+    ).setView([pos.coords.latitude, pos.coords.longitude], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -35,12 +44,18 @@ function success(pos){
     .addTo(map)
     .bindPopup('Vous êtes ici!')
     .openPopup();
-
+    L.control.scale().addTo(map);
     
 }
 
 function error(err){
     console.log(err);
+    // Check if the error code is PERMISSION_DENIED
+    if (err.code === err.PERMISSION_DENIED) {
+        alert('Location is not enabled. Please enable location services to use this feature.');
+    } else {
+        alert('An error occurred while getting the location: ' + err.message);
+    }
 }
 
 var watchID = navigator.geolocation.watchPosition(success, error, {
@@ -48,5 +63,5 @@ var watchID = navigator.geolocation.watchPosition(success, error, {
     timeout: 5000
 });
 
-//navigator.geolocation.clearWatch(watchID);
 
+//navigator.geolocation.clearWatch(watchID);
