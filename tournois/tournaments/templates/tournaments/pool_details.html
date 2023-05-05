@@ -123,6 +123,54 @@ Extend site-wide base HTML template located in main templates/ dir
             </tbody>
 
         </table>
+
+        <style>
+    
+            #scatter-plot {
+                max-width: 70%;
+                margin: 0 auto;
+                background-color: #acd4dc;
+            }
+            
+            #goals-per-team-plot {
+                max-width: 70%;
+                margin: 0 auto;
+                background-color: #acd4dc;
+            }
+            
+            #goals-per-match-plot {
+                max-width: 70%;
+                margin: 0 auto;
+                background-color: #acd4dc;
+            }
+        
+        </style>
+        
+        <div class="row pb-3">
+            <h1>Graphiques</h1>
+        </div>
+        
+        
+        <br>
+        <br>
+        <div>
+            {% include 'tournaments/scatter_plot.html' %}
+        </div>
+        <br>
+        <div>
+            {% include 'tournaments/goals_per_team_plot.html' %}
+        </div>
+        <br>
+        <br>
+        <div>
+            {% include 'tournaments/goals_per_match_plot.html' %}
+        </div>
+        <br>
+        <br>
+
+
+
+        
     </div>
 {% else %}
     <div class="jumbotron"><i>No match in the pool.</i></div> <br>
@@ -133,46 +181,5 @@ Extend site-wide base HTML template located in main templates/ dir
 {% endif %}
 
 
-
-<style>
-    
-    #scatter-plot {
-        max-width: 70%;
-        margin: 0 auto;
-        background-color: #F9C51E;
-    }
-    
-    #goals-per-team-plot {
-        max-width: 70%;
-        margin: 0 auto;
-        background-color: #F67C23;
-    }
-    
-    #goals-per-match-plot {
-        max-width: 70%;
-        margin: 0 auto;
-        background-color: #DE1E3D;
-    }
-
-</style>
-
-
-
-<br>
-<br>
-<div>
-    {% include 'tournaments/scatter_plot.html' %}
-</div>
-<br>
-<div>
-    {% include 'tournaments/goals_per_team_plot.html' %}
-</div>
-<br>
-<br>
-<div>
-    {% include 'tournaments/goals_per_match_plot.html' %}
-</div>
-<br>
-<br>
 
 {% endblock content %}
