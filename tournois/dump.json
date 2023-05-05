@@ -1835,7 +1835,7 @@
             "score1": 0,
             "team2": 13,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1851,7 +1851,7 @@
             "score1": 0,
             "team2": 5,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1867,7 +1867,7 @@
             "score1": 0,
             "team2": 25,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1883,7 +1883,7 @@
             "score1": 0,
             "team2": 30,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1899,7 +1899,7 @@
             "score1": 0,
             "team2": 4,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1915,7 +1915,7 @@
             "score1": 0,
             "team2": 17,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1931,7 +1931,7 @@
             "score1": 0,
             "team2": 21,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
@@ -1947,7 +1947,7 @@
             "score1": 0,
             "team2": 12,
             "score2": 0,
-            "pool": null,
+            "pool": 3,
             "localisation": null,
             "round": 1
         }
